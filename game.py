@@ -1,6 +1,5 @@
 import cardsdb
 import player
-import random
 import copy
 
 class PropertySet:
@@ -54,24 +53,8 @@ class PropertySet:
     else:
       return -1
 
-class Deck:
-  def __init__(self):
-    self.deck = random.shuffle(list(ALL_CARDS))
-    self.used_pile = []
-
-  def draw(self):
-    if len(self.deck) == 0:
-      self.deck = random.shuffle(list(self.used_pile))
-      self.used_pile = []
-
-    return self.deck.pop(0)
-
-  def getCards(self, number):
-    cards = []
-    for i in range(number):
-      cards.append(self.draw())
-    return cards
-
+  def isCompleted():
+    return self.numberToComplete() >= self.numberOfProperties()
 
 class Game:
   def __init__(self, n_players):
@@ -93,14 +76,31 @@ class Game:
     for player in self.players:
       completed_count = 0
       for property in player.properties:
-        if property.numberOfProperties() >= property.numberToComplete():
+        if property.isCompleted():
           completed_count += 1
       if completed_count >= self.completedSetsToWin:
         return True
     return False
 
   def getPossibleMoves(self, player):
-    return []
+    moves = []
+
+    for card in player.hand:
+      if isinstance(card, PropertyCard):
+        moves.append(PlayPropertyAction(card, PropertySet(card.colors)))
+        for property in player.properties:
+          if not property.isCompleted() and len(set(card.colors).intersection(property.colors)) > 0:
+            moves.append(PlayPropertyAction(card, property))
+      elif isinstance(card, MoneyCard):
+        moves.append(AddMoneyAction(card.value))
+      elif isinstance(card, RentCard):
+        moves.append(AddMoneyAction(card.value))
+        for property in player.properties:
+          if len(property.colors) == 1 and (property.colors[0] in card.colors or card.wild):
+            moves.append(UseRentAction(card.colors, property.colors[0], card.wild))
+      elif isinstance(card, ActionCard):
+        moves.append(UseActionCard(card.action))
+        moves.append(AddMoneyAction(card.value))
 
   def applyMove(self, move):
     return False
