@@ -21,7 +21,14 @@ class Player:
       if isinstance(card, MoneyCard) or isinstance(card, ActionCard) or isinstance(card, RentCard):
         money.append(card)
       else:
+        added = False
         for set in self.sets:
           if set.canAddProperty(card):
             set.addProperty(card)
+            added = True
             break
+
+        if not added:
+          pSet = PropertySet(card.colors)
+          pSet.addProperty(card)
+          sets.append(pSet)
