@@ -1,4 +1,6 @@
+from cardsdb import *
 import random
+import copy
 
 class Player:
   def __init__(self, id, hand):
@@ -10,25 +12,103 @@ class Player:
     self.doubleRent = False
 
   def chooseMove(self, instance, possible_moves, moves_left):
-    return possible_moves[random.randint(0, len(possible_moves))]
+    # Dumb
+    if possible_moves:
+      self.cleanClearSets()
+      return possible_moves[random.randint(0, len(possible_moves) - 1)]
+    else:
+      print("Problem with the possible moves. Quitting.")
+      quit()
 
   def choosePayment(self, instance, how_much):
-    return []
+    # Naive
+    payment = []
+    payed = 0
+    for money in self.money:
+      if payed < how_much:
+        payed += money.value
+        payment.append(copy.deepcopy(money))
+        self.money.remove(money)
+
+    while payed < how_much and len(self.sets) > 0:
+      for pSet in self.sets:
+        for property in pSet.properties:
+          if payed < how_much:
+            payed += property.value
+            payment.append(copy.deepcopy(property))
+            pSet.properties.remove(property)
+
+    self.cleanClearSets()
+    return payment
+
+  def chooseWhatToDiscard(self):
+    #Naive
+    discarded = []
+    while len(self.hand) > 7:
+      discarded.append(self.hand.pop(random.randint(0, len(self.hand) - 1)))
+
+    return discarded
 
   def recievePayment(self, payment):
     # Naive
     for card in payment:
       if isinstance(card, MoneyCard) or isinstance(card, ActionCard) or isinstance(card, RentCard):
-        money.append(card)
-      else:
+        self.money.append(card)
+      elif isinstance(card, PropertyCard):
         added = False
-        for set in self.sets:
-          if set.canAddProperty(card):
-            set.addProperty(card)
+        for pSet in self.sets:
+          if pSet.canAddProperty(card):
+            pSet.addProperty(card)
             added = True
             break
 
         if not added:
           pSet = PropertySet(card.colors)
           pSet.addProperty(card)
-          sets.append(pSet)
+          self.sets.append(pSet)
+      elif isinstance(card, PropertySet):
+        self.sets.append(card)
+      else:
+        print("?????")
+
+    self.cleanClearSets()
+
+  def willNegate(self):
+    has_negate = False
+    for card in self.hand:
+      if card.id == JUST_SAY_NO:
+        has_negate = True
+        break
+    return has_negate
+
+  def turnPassing(self):
+    self.doubleRent = False
+    self.cleanClearSets()
+
+  def cleanClearSets(self):
+    rem = []
+    for pSet in self.sets:
+      if pSet.numberOfProperties() == 0:
+        rem.append(pSet)
+
+    for pSet in rem:
+      self.sets.remove(pSet)
+
+  def printInfo(self):
+    hand_str = ""
+    for card in self.hand:
+      hand_str += "[" + str(card.name) + "] "
+    print("Player #" + str(self.id) + " Hand: " + hand_str + "\n")
+
+    money_str = ""
+    for money in self.money:
+      money_str += "[" + str(money.name) + "] "
+    print("Player #" + str(self.id) + " Money Pile:" + money_str + "\n")
+
+    sets_str = ""
+    for pSet in self.sets:
+      sets_str += "["
+      for p in pSet.properties:
+        sets_str += "[" + str(p.name) + "] "
+      sets_str += "]\n"
+    print("Player #" + str(self.id) + " Field:" + sets_str + "\n")

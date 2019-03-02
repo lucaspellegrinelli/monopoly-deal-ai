@@ -1,21 +1,20 @@
-import card
-import cardconsts
+from card import *
 
 ALL_CARDS = []
 
 # ----------- MONEY ------------- #
 def getMoney(n):
-  if money == 1:
+  if n == 1:
     return MoneyCard(5, "1M", 1)
-  elif money == 2:
+  elif n == 2:
     return MoneyCard(4, "2M", 2)
-  elif money == 3:
+  elif n == 3:
     return MoneyCard(3, "3M", 3)
-  elif money == 4:
+  elif n == 4:
     return MoneyCard(2, "4M", 4)
-  elif money == 5:
+  elif n == 5:
     return MoneyCard(1, "5M", 5)
-  elif money == 10:
+  elif n == 10:
     return MoneyCard(0, "10M", 10)
 
 for i in range(1):
@@ -117,7 +116,7 @@ DOUBLE_RENT = 32
 FORCED_DEAL = 33
 HOTEL = 34
 HOUSE = 35
-ITS_MY_BIRTHDAY 36
+ITS_MY_BIRTHDAY = 36
 JUST_SAY_NO = 37
 PASS_GO = 38
 SLY_DEAL = 39
@@ -150,4 +149,4 @@ for i in range(10):
   ALL_CARDS.append(ActionCard(PASS_GO, "Pass Go", 1, "Draw 2"))
 
 for i in range(3):
-  ALL_CARDS.append(ActionCard(SLY_DEAL, "Sly Deal", 3, "Steal a non set property"))
+  ALL_CARDS.append(ActionCard(SLY_DEAL, "Sly Deal", 3, "Steal a non pSet property"))
