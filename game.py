@@ -23,23 +23,6 @@ class Game:
       print("Deck size: " + str(len(self.deck.deck)))
       print("Discard size: " + str(len(self.deck.used_pile)))
 
-      total = self.deck.deck + self.deck.used_pile
-      for pl in self.players:
-        total += pl.hand
-        total += pl.money
-        for pset in pl.sets:
-          total += pset.properties
-
-      t = 0
-      for a in ALL_CARDS:
-        if isinstance(a, ActionCard) and a.id != HOTEL and a.id != HOUSE:
-          t += 1
-
-      if t != 30:
-        print("Total cards: " + str(t))
-        break
-
-
       self.players[curr_player].hand += self.deck.getCards(self.drawPerTurn)
 
       self.players[curr_player].printInfo()
@@ -92,7 +75,8 @@ class Game:
 
     for card in player.hand:
       if isinstance(card, PropertyCard):
-        moves.append(PlayPropertyAction(card, PropertySet(card.colors)))
+        if not card.isRainbow():
+          moves.append(PlayPropertyAction(card, PropertySet(card.colors)))
         for pSet in player.sets:
           if pSet.canAddProperty(card):
             moves.append(PlayPropertyAction(card, pSet))
@@ -194,6 +178,7 @@ class Game:
             print("Player #" + str(p.id) + " negated the effect!")
             for c_hand in p.hand:
               if c_hand.id == JUST_SAY_NO:
+                self.deck.used_pile.append(copy.deepcopy(copy.deepcopy(c_hand)))
                 p.hand.remove(c_hand)
                 break
           else:

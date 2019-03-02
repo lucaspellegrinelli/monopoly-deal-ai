@@ -39,6 +39,7 @@ class Player:
             pSet.properties.remove(property)
 
     self.cleanClearSets()
+    print(self.id, payment)
     return payment
 
   def chooseWhatToDiscard(self, instance):
@@ -76,7 +77,7 @@ class Player:
   def willNegate(self, instance):
     has_negate = False
     for card in self.hand:
-      if card.id == JUST_SAY_NO:
+      if card != [] and card.id == JUST_SAY_NO:
         has_negate = True
         break
     return has_negate

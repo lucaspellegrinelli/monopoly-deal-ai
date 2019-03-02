@@ -25,6 +25,9 @@ class PropertyCard(Card):
     Card.__init__(self, id, name, value)
     self.colors = colors
 
+  def isRainbow(self):
+    return self.colors[0] == 10
+
 class RentCard(Card):
   def __init__(self, id, name, value, colors, wild):
     Card.__init__(self, id, name, value)
@@ -63,7 +66,7 @@ class PropertySet:
   def addProperty(self, property):
     has_common_color = len(set(self.colors).intersection(property.colors)) > 0
     at_least_one_non_wild = self.numberOfProperties() == 0 or (len(self.colors) == 1 or len(property.colors) == 1)
-    if has_common_color and at_least_one_non_wild and not self.isCompleted():
+    if self.canAddProperty(property):
       self.properties.append(property)
       self.colors = list(set(self.colors).intersection(property.colors))
     else:
@@ -143,6 +146,9 @@ class PropertySet:
     return self.colors[0] == BLACK_PROPERTY or self.colors[0] == LIGHT_GREEN_PROPERTY
 
   def canAddProperty(self, property):
-    has_common_color = len(set(self.colors).intersection(property.colors)) > 0
-    at_least_one_non_wild = self.numberOfProperties() == 0 or (len(self.colors) == 1 or len(property.colors) == 1)
-    return has_common_color and at_least_one_non_wild and not self.isCompleted()
+    if self.colors[0] == 10:
+      return self.numberOfProperties() > 0 and self.isDefined()
+    else:
+      has_common_color = len(set(self.colors).intersection(property.colors)) > 0
+      at_least_one_non_wild = self.numberOfProperties() == 0 or (len(self.colors) == 1 or len(property.colors) == 1)
+      return has_common_color and at_least_one_non_wild and not self.isCompleted()
