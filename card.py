@@ -38,10 +38,12 @@ class Deck:
     self.used_pile = []
 
   def draw(self):
-    if len(self.deck) == 0:
+    if len(self.deck) == 0 and len(self.used_pile) > 0:
       self.deck = copy.deepcopy(self.used_pile)
       random.shuffle(self.deck)
       self.used_pile = []
+    elif len(self.deck) == 0 and len(self.used_pile) == 0:
+      return []
 
     return self.deck.pop(0)
 

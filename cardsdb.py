@@ -130,7 +130,7 @@ for i in range(3):
 for i in range(2):
   ALL_CARDS.append(ActionCard(DOUBLE_RENT, "Double the Rent", 1, "Double the rent"))
 
-for i in range(3):
+for i in range(4):
   ALL_CARDS.append(ActionCard(FORCED_DEAL, "Forced Deal", 3, "Swap any non completed property"))
 
 for i in range(3):

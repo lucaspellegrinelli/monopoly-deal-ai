@@ -41,7 +41,7 @@ class Player:
     self.cleanClearSets()
     return payment
 
-  def chooseWhatToDiscard(self):
+  def chooseWhatToDiscard(self, instance):
     #Naive
     discarded = []
     while len(self.hand) > 7:
@@ -73,7 +73,7 @@ class Player:
 
     self.cleanClearSets()
 
-  def willNegate(self):
+  def willNegate(self, instance):
     has_negate = False
     for card in self.hand:
       if card.id == JUST_SAY_NO:
@@ -97,7 +97,8 @@ class Player:
   def printInfo(self):
     hand_str = ""
     for card in self.hand:
-      hand_str += "[" + str(card.name) + "] "
+      if card != []:
+        hand_str += "[" + str(card.name) + "] "
     print("Player #" + str(self.id) + " Hand: " + hand_str + "\n")
 
     money_str = ""

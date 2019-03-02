@@ -21,6 +21,25 @@ class Game:
       print("Player #" + str(curr_player) + " turn\n")
       print("Player drew\n")
       print("Deck size: " + str(len(self.deck.deck)))
+      print("Discard size: " + str(len(self.deck.used_pile)))
+
+      total = self.deck.deck + self.deck.used_pile
+      for pl in self.players:
+        total += pl.hand
+        total += pl.money
+        for pset in pl.sets:
+          total += pset.properties
+
+      t = 0
+      for a in ALL_CARDS:
+        if isinstance(a, ActionCard) and a.id != HOTEL and a.id != HOUSE:
+          t += 1
+
+      if t != 30:
+        print("Total cards: " + str(t))
+        break
+
+
       self.players[curr_player].hand += self.deck.getCards(self.drawPerTurn)
 
       self.players[curr_player].printInfo()
@@ -33,7 +52,7 @@ class Game:
 
       self.players[curr_player].turnPassing()
 
-      discarded_cards = self.players[curr_player].chooseWhatToDiscard()
+      discarded_cards = self.players[curr_player].chooseWhatToDiscard(self.getInstance())
       random.shuffle(discarded_cards)
       self.deck.deck += discarded_cards
 
@@ -56,6 +75,7 @@ class Game:
         if pSet.isCompleted():
           completed_count += 1
       if completed_count >= self.completedSetsToWin:
+        print("Player #" + str(player.id) + " won")
         return True
     return False
 
@@ -170,7 +190,7 @@ class Game:
       payments = []
       for p in self.players:
         if p.id in action.targets:
-          if p.willNegate():
+          if p.willNegate(self.getInstance()):
             print("Player #" + str(p.id) + " negated the effect!")
             for c_hand in p.hand:
               if c_hand.id == JUST_SAY_NO:
