@@ -1,25 +1,40 @@
 import card
+import cardconsts
 
 ALL_CARDS = []
 
 # ----------- MONEY ------------- #
+def getMoney(n):
+  if money == 1:
+    return MoneyCard(5, "1M", 1)
+  elif money == 2:
+    return MoneyCard(4, "2M", 2)
+  elif money == 3:
+    return MoneyCard(3, "3M", 3)
+  elif money == 4:
+    return MoneyCard(2, "4M", 4)
+  elif money == 5:
+    return MoneyCard(1, "5M", 5)
+  elif money == 10:
+    return MoneyCard(0, "10M", 10)
+
 for i in range(1):
-  ALL_CARDS.append(MoneyCard(0, "10M", 10))
+  ALL_CARDS.append(getMoney(10))
 
 for i in range(2):
-  ALL_CARDS.append(MoneyCard(1, "5M", 10))
+  ALL_CARDS.append(getMoney(5))
 
 for i in range(3):
-  ALL_CARDS.append(MoneyCard(2, "4M", 4))
+  ALL_CARDS.append(getMoney(4))
 
 for i in range(3):
-  ALL_CARDS.append(MoneyCard(3, "3M", 3))
+  ALL_CARDS.append(getMoney(3))
 
 for i in range(5):
-  ALL_CARDS.append(MoneyCard(4, "2M", 2))
+  ALL_CARDS.append(getMoney(2))
 
 for i in range(6):
-  ALL_CARDS.append(MoneyCard(5, "1M", 1))
+  ALL_CARDS.append(getMoney(1))
 
 # ----------- PROPERTY ------------- #
 for i in range(2):
@@ -96,33 +111,43 @@ for i in range(3):
   ALL_CARDS.append(RentCard(29, "Wild Rent", 1, [], True))
 
 # ----------- ACTION ------------- #
-# TODO, I NEED THE GAME INSTANCE TO DO THIS
+DEAL_BREAKER = 30
+DEBT_COLLECTOR = 31
+DOUBLE_RENT = 32
+FORCED_DEAL = 33
+HOTEL = 34
+HOUSE = 35
+ITS_MY_BIRTHDAY 36
+JUST_SAY_NO = 37
+PASS_GO = 38
+SLY_DEAL = 39
+
 for i in range(2):
-  ALL_CARDS.append(ActionCard(30, "Deal Braker", 5, "Steal a completed set"))
+  ALL_CARDS.append(ActionCard(DEAL_BREAKER, "Deal Braker", 5, "Steal a completed set"))
 
 for i in range(3):
-  ALL_CARDS.append(ActionCard(31, "Debt Collector", 3, "Force someone to give you 5M"))
+  ALL_CARDS.append(ActionCard(DEBT_COLLECTOR, "Debt Collector", 3, "Force someone to give you 5M"))
 
 for i in range(2):
-  ALL_CARDS.append(ActionCard(32, "Double the Rent", 1, "Double the rent"))
+  ALL_CARDS.append(ActionCard(DOUBLE_RENT, "Double the Rent", 1, "Double the rent"))
 
 for i in range(3):
-  ALL_CARDS.append(ActionCard(33, "Forced Deal", 3, "Swap any non completed property"))
+  ALL_CARDS.append(ActionCard(FORCED_DEAL, "Forced Deal", 3, "Swap any non completed property"))
 
 for i in range(3):
-  ALL_CARDS.append(ActionCard(34, "Hotel", 4, "Add on top of a house"))
+  ALL_CARDS.append(ActionCard(HOTEL, "Hotel", 4, "Add on top of a house"))
 
 for i in range(3):
-  ALL_CARDS.append(ActionCard(35, "Hotel", 3, "Add on top of a completed set"))
+  ALL_CARDS.append(ActionCard(HOUSE, "House", 3, "Add on top of a completed set"))
 
 for i in range(3):
-  ALL_CARDS.append(ActionCard(36, "It's my birthday", 2, "Get 2M from everyone"))
+  ALL_CARDS.append(ActionCard(ITS_MY_BIRTHDAY, "It's my birthday", 2, "Get 2M from everyone"))
 
 for i in range(3):
-  ALL_CARDS.append(ActionCard(37, "Just Say No", 4, "No"))
+  ALL_CARDS.append(ActionCard(JUST_SAY_NO, "Just Say No", 4, "No"))
 
 for i in range(10):
-  ALL_CARDS.append(ActionCard(38, "Pass Go", 1, "Draw 2"))
+  ALL_CARDS.append(ActionCard(PASS_GO, "Pass Go", 1, "Draw 2"))
 
 for i in range(3):
-  ALL_CARDS.append(ActionCard(39, "Sly Deal", 3, "Steal a non set property"))
+  ALL_CARDS.append(ActionCard(SLY_DEAL, "Sly Deal", 3, "Steal a non set property"))
