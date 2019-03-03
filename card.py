@@ -8,6 +8,13 @@ class Card:
     self.name = name
     self.value = value
 
+  def __eq__(self, other):
+    return type(self) == type(other) and self.id == other.id and\
+           self.name == other.name and self.value == other.value
+
+  def __ne__(self, other):
+    return not self.__eq__(other)
+
   def __repr__(self):
     return self.name
 
@@ -15,10 +22,22 @@ class MoneyCard(Card):
   def __init__(self, id, name, value):
     Card.__init__(self, id, name, value)
 
+  def __eq__(self, other):
+    Card.__eq__(self, other)
+
+  def __ne__(self, other):
+    Card.__ne__(self, other)
+
 class ActionCard(Card):
   def __init__(self, id, name, value, action):
     Card.__init__(self, id, name, value)
     self.action = action
+
+  def __eq__(self, other):
+    Card.__eq__(self, other)
+
+  def __ne__(self, other):
+    Card.__ne__(self, other)
 
 class PropertyCard(Card):
   def __init__(self, id, name, value, colors):
@@ -28,11 +47,23 @@ class PropertyCard(Card):
   def isRainbow(self):
     return self.colors[0] == 10
 
+  def __eq__(self, other):
+    Card.__eq__(self, other)
+
+  def __ne__(self, other):
+    Card.__ne__(self, other)
+
 class RentCard(Card):
   def __init__(self, id, name, value, colors, wild):
     Card.__init__(self, id, name, value)
     self.colors = colors
     self.wild = wild
+
+  def __eq__(self, other):
+    Card.__eq__(self, other)
+
+  def __ne__(self, other):
+    Card.__ne__(self, other)
 
 class Deck:
   def __init__(self, all_cards):
@@ -62,6 +93,14 @@ class PropertySet:
     self.colors = colors
     self.hasHouse = False
     self.hasHotel = False
+
+  def __eq__(self, other):
+    return type(self) == type(other) and self.properties == other.properties and\
+           self.colors == other.colors and self.hasHouse == other.hasHouse and\
+           self.hasHotel == other.hasHotel
+
+  def __ne__(self, other):
+    return self.__eq__(other)
 
   def addProperty(self, property):
     has_common_color = len(set(self.colors).intersection(property.colors)) > 0

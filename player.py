@@ -1,4 +1,5 @@
 from cardsdb import *
+from ai import *
 import random
 import copy
 
@@ -9,16 +10,14 @@ class Player:
     self.sets = []
     self.money = []
 
+    self.ai = AI()
+
     self.doubleRent = False
 
-  def chooseMove(self, instance, possible_moves, moves_left):
+  def chooseMove(self, instance, moves_left):
     # Dumb
-    if possible_moves:
-      self.cleanClearSets()
-      return possible_moves[random.randint(0, len(possible_moves) - 1)]
-    else:
-      print("Problem with the possible moves. Quitting.")
-      quit()
+    possible_moves = self.ai.getTurnPossibleMoves(instance, self)
+    return possible_moves[random.randint(0, len(possible_moves) - 1)]
 
   def choosePayment(self, instance, how_much):
     # Naive

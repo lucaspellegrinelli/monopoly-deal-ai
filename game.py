@@ -25,23 +25,62 @@ class Game:
       print("Deck size: " + str(len(self.deck.deck)))
       print("Discard size: " + str(len(self.deck.used_pile)))
 
+      # t = self.deck.deck + self.deck.used_pile
+      # for p in self.players:
+      #   t += p.hand
+      #   t += p.money
+      #   for s in p.sets:
+      #     t += s.properties
+      #
+      # money = [0, 0]
+      # action = [0, 0]
+      # propertyy = [0, 0]
+      # rent = [0, 0]
+      #
+      # for c in ALL_CARDS:
+      #   if c == [] or c.id == HOTEL or c.id == HOUSE:
+      #     continue
+      #   if isinstance(c, MoneyCard):
+      #     money[1] += 1
+      #   if isinstance(c, RentCard):
+      #     rent[1] += 1
+      #   if isinstance(c, ActionCard):
+      #     action[1] += 1
+      #   if isinstance(c, PropertyCard):
+      #     propertyy[1] += 1
+      #
+      # for c in t:
+      #   if c == [] or c.id == HOTEL or c.id == HOUSE:
+      #     continue
+      #   if isinstance(c, MoneyCard):
+      #     money[0] += 1
+      #   if isinstance(c, RentCard):
+      #     rent[0] += 1
+      #   if isinstance(c, ActionCard):
+      #     action[0] += 1
+      #   if isinstance(c, PropertyCard):
+      #     propertyy[0] += 1
+      #
+      # print("money", money, "property", propertyy, "rent", rent, "action", action)
+
       self.players[curr_player].hand += self.deck.getCards(self.drawPerTurn)
 
       self.players[curr_player].printInfo()
 
       for action in range(self.actionsPerTurn):
-        possible_moves = self.getPossibleMoves(self.players[curr_player])
-        if len(possible_moves) == 1:
-          self.noOptionsCount += 1
+        chosen_action = self.players[curr_player].chooseMove(self, self.actionsPerTurn - action)
+
+        if isinstance(chosen_action, DoNothingAction):
+          self.noOptionsCount += 1 if isinstance(chosen_action, DoNothingAction) else 0
         else:
           self.noOptionsCount = 0
-        chosen_action = self.players[curr_player].chooseMove(self.getInstance(), possible_moves, self.actionsPerTurn - action)
+
         print(chosen_action)
         self.applyAction(chosen_action, self.players[curr_player])
 
       self.players[curr_player].turnPassing()
 
-      discarded_cards = self.players[curr_player].chooseWhatToDiscard(self.getInstance())
+      discarded_cards = self.players[curr_player].chooseWhatToDiscard(self)
       random.shuffle(discarded_cards)
       self.deck.deck += discarded_cards
 
@@ -51,12 +90,29 @@ class Game:
       print("\n------- Turn Passing -------\n")
       curr_player = (curr_player + 1) % len(self.players)
 
-  def getInstance(self):
-    # instance = Game(len(self.players))
-    # instance.deck = copy.deepcopy(self.deck)
-    # instance.players = copy.deepcopy(self.players)
-    # return instance
-    return 0
+  def getInstance(self, player_id):
+    instance = Game(len(self.players))
+    instance.deck = copy.deepcopy(self.deck)
+    instance.players = copy.deepcopy(self.players)
+    instance.noOptionsCount = copy.deepcopy(self.noOptionsCount)
+
+    # The played doesn't have info about cards in opponent hand
+    # So I need to blend it with the deck
+    cards_in_hand = []
+    for p in instance.players:
+      if p.id != player_id:
+        cards_in_hand.append([p.id, len(p.hand)])
+        instance.deck.deck += copy.deepcopy(p.hand)
+        p.hand = []
+
+    random.shuffle(instance.deck.deck)
+    for p in instance.players:
+      for c_in_hand in cards_in_hand:
+        if p.id == c_in_hand[0]:
+          p.hand += instance.deck.getCards(c_in_hand[1])
+          break
+
+    return instance
 
   def gameEnded(self):
     if self.noOptionsCount >= len(self.players) * 3:
@@ -73,7 +129,7 @@ class Game:
         return True
     return False
 
-  def getPossibleMoves(self, player):
+  def getTurnPossibleMoves(self, player):
     moves = []
     moves.append(DoNothingAction())
 
@@ -185,7 +241,7 @@ class Game:
       payments = []
       for p in self.players:
         if p.id in action.targets:
-          if p.willNegate(self.getInstance()):
+          if p.willNegate(self):
             print("Player #" + str(p.id) + " negated the effect!")
             for c_hand in p.hand:
               if c_hand.id == JUST_SAY_NO:
@@ -193,7 +249,7 @@ class Game:
                 p.hand.remove(c_hand)
                 break
           else:
-            payments += p.choosePayment(self.getInstance(), action.money)
+            payments += p.choosePayment(self, action.money)
 
       self.deck.used_pile.append(copy.deepcopy(action.card))
       # Remove card from hand
