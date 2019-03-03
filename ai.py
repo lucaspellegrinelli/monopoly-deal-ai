@@ -1,9 +1,61 @@
 from cardsdb import *
 from action import *
+import random
 
 class AI:
   def __init__(self):
     self.depth = 3
+
+  def randomChooseMove(self, player, instance):
+    possible_moves = self.getTurnPossibleMoves(instance, player)
+    return possible_moves[random.randint(0, len(possible_moves) - 1)]
+
+  def randomChoosePayment(self, player, how_much):
+    payment = []
+    payed = 0
+
+    for item in player.money:
+      if payed < how_much:
+        payed += item.value
+        payment.append(copy.deepcopy(item))
+        player.money.remove(item)
+
+    for pSet in player.sets:
+      for item in pSet.properties:
+        if payed < how_much:
+          payed += item.value
+          payment.append(copy.deepcopy(item))
+          pSet.properties.remove(item)
+
+    return payment
+
+  def randomChooseWhatToDiscard(self, player):
+    discarded = []
+    while len(player.hand) > 7:
+      discarded.append(player.hand.pop(random.randint(0, len(player.hand) - 1)))
+    return discarded
+
+  def randomWillNegate(self, player):
+    has_negate = False
+    for card in player.hand:
+      if card != [] and card.id == JUST_SAY_NO:
+        has_negate = True
+        break
+    return has_negate
+
+  def randomRecievePayment(self, player, properties):
+    added = False
+    for item in properties:
+      for pSet in player.sets:
+        if pSet.canAddProperty(item):
+          pSet.addProperty(item)
+          added = True
+          break
+
+      if not added:
+        pSet = PropertySet(item.colors)
+        pSet.addProperty(item)
+        player.sets.append(pSet)
 
   def getTurnPossibleMoves(self, instance, player):
     moves = []

@@ -15,76 +15,30 @@ class Player:
     self.doubleRent = False
 
   def chooseMove(self, instance, moves_left):
-    # Dumb
-    possible_moves = self.ai.getTurnPossibleMoves(instance, self)
-    return possible_moves[random.randint(0, len(possible_moves) - 1)]
+    return self.ai.randomChooseMove(self, instance)
 
   def choosePayment(self, instance, how_much):
-    # Naive
-    payment = []
-    payed = 0
-    for money in self.money:
-      if payed < how_much:
-        payed += money.value
-        payment.append(copy.deepcopy(money))
-        self.money.remove(money)
-      else:
-        break
-
-    for pSet in self.sets:
-      if payed >= how_much:
-        break
-      for property in pSet.properties:
-        if payed < how_much:
-          payed += property.value
-          payment.append(copy.deepcopy(property))
-          pSet.properties.remove(property)
-        else:
-          break
-
+    ans = self.ai.randomChoosePayment(self, how_much)
     self.cleanClearSets()
-    print(self.id, payment)
-    return payment
+    return ans
 
   def chooseWhatToDiscard(self, instance):
-    #Naive
-    discarded = []
-    while len(self.hand) > 7:
-      discarded.append(self.hand.pop(random.randint(0, len(self.hand) - 1)))
+    return self.ai.randomChooseWhatToDiscard(self)
 
-    return discarded
+  def recievePayment(self, instance, payment):
+    single_properties = []
+    for item in payment:
+      if isinstance(item, MoneyCard) or isinstance(item, ActionCard) or isinstance(item, RentCard):
+        self.money.append(item)
+      elif isinstance(item, PropertyCard):
+        single_properties.append(item)
+      elif isinstance(item, PropertySet):
+        self.sets.append(item)
 
-  def recievePayment(self, payment):
-    # Naive
-    for card in payment:
-      if isinstance(card, MoneyCard) or isinstance(card, ActionCard) or isinstance(card, RentCard):
-        self.money.append(card)
-      elif isinstance(card, PropertyCard):
-        added = False
-        for pSet in self.sets:
-          if pSet.canAddProperty(card):
-            pSet.addProperty(card)
-            added = True
-            break
-
-        if not added:
-          pSet = PropertySet(card.colors)
-          pSet.addProperty(card)
-          self.sets.append(pSet)
-      elif isinstance(card, PropertySet):
-        self.sets.append(card)
-      else:
-        print("?????")
-
-    self.cleanClearSets()
+    self.ai.randomRecievePayment(self, single_properties)
 
   def willNegate(self, instance):
-    has_negate = False
-    for card in self.hand:
-      if card != [] and card.id == JUST_SAY_NO:
-        has_negate = True
-        break
-    return has_negate
+    return self.ai.randomWillNegate(self)
 
   def turnPassing(self):
     self.doubleRent = False
@@ -99,17 +53,21 @@ class Player:
     for pSet in rem:
       self.sets.remove(pSet)
 
-  def printInfo(self):
+  def __str__(self):
+    final = ""
+
     hand_str = ""
     for card in self.hand:
       if card != []:
         hand_str += "[" + str(card.name) + "] "
-    print("Player #" + str(self.id) + " Hand:\n" + hand_str + "\n")
+
+    final += "Player #" + str(self.id) + " Hand:\n" + hand_str + "\n"
 
     money_str = ""
     for money in self.money:
       money_str += "[" + str(money.name) + "] "
-    print("Player #" + str(self.id) + " Money Pile:\n" + money_str + "\n")
+
+    final += "Player #" + str(self.id) + " Money Pile:\n" + money_str + "\n"
 
     sets_str = ""
     for pSet in self.sets:
@@ -117,4 +75,7 @@ class Player:
       for p in pSet.properties:
         sets_str += "[" + str(p.name) + "]"
       sets_str += "]\n"
-    print("Player #" + str(self.id) + " Field:\n" + sets_str + "\n")
+
+    final += "Player #" + str(self.id) + " Field:\n" + sets_str + "\n"
+
+    return final

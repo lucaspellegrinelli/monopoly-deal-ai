@@ -17,58 +17,59 @@ class Game:
     self.players = [Player(i, self.deck.getCards(self.startingHandCount)) for i in range(n_players)]
 
   def run(self):
-    curr_player = random.randint(0, len(self.players) - 1)
+    player_index = random.randint(0, len(self.players) - 1)
 
     while not self.gameEnded():
-      print("Player #" + str(curr_player) + " turn\n")
+      player = self.players[player_index]
+      print("Player #" + str(player_index) + " turn\n")
       print("Player drew\n")
       print("Deck size: " + str(len(self.deck.deck)))
       print("Discard size: " + str(len(self.deck.used_pile)))
 
-      # t = self.deck.deck + self.deck.used_pile
-      # for p in self.players:
-      #   t += p.hand
-      #   t += p.money
-      #   for s in p.sets:
-      #     t += s.properties
-      #
-      # money = [0, 0]
-      # action = [0, 0]
-      # propertyy = [0, 0]
-      # rent = [0, 0]
-      #
-      # for c in ALL_CARDS:
-      #   if c == [] or c.id == HOTEL or c.id == HOUSE:
-      #     continue
-      #   if isinstance(c, MoneyCard):
-      #     money[1] += 1
-      #   if isinstance(c, RentCard):
-      #     rent[1] += 1
-      #   if isinstance(c, ActionCard):
-      #     action[1] += 1
-      #   if isinstance(c, PropertyCard):
-      #     propertyy[1] += 1
-      #
-      # for c in t:
-      #   if c == [] or c.id == HOTEL or c.id == HOUSE:
-      #     continue
-      #   if isinstance(c, MoneyCard):
-      #     money[0] += 1
-      #   if isinstance(c, RentCard):
-      #     rent[0] += 1
-      #   if isinstance(c, ActionCard):
-      #     action[0] += 1
-      #   if isinstance(c, PropertyCard):
-      #     propertyy[0] += 1
-      #
-      # print("money", money, "property", propertyy, "rent", rent, "action", action)
+      t = self.deck.deck + self.deck.used_pile
+      for p in self.players:
+        t += p.hand
+        t += p.money
+        for s in p.sets:
+          t += s.properties
 
-      self.players[curr_player].hand += self.deck.getCards(self.drawPerTurn)
+      money = [0, 0]
+      action = [0, 0]
+      propertyy = [0, 0]
+      rent = [0, 0]
 
-      self.players[curr_player].printInfo()
+      for c in ALL_CARDS:
+        if c == [] or c.id == HOTEL or c.id == HOUSE:
+          continue
+        if isinstance(c, MoneyCard):
+          money[1] += 1
+        if isinstance(c, RentCard):
+          rent[1] += 1
+        if isinstance(c, ActionCard):
+          action[1] += 1
+        if isinstance(c, PropertyCard):
+          propertyy[1] += 1
+
+      for c in t:
+        if c == [] or c.id == HOTEL or c.id == HOUSE:
+          continue
+        if isinstance(c, MoneyCard):
+          money[0] += 1
+        if isinstance(c, RentCard):
+          rent[0] += 1
+        if isinstance(c, ActionCard):
+          action[0] += 1
+        if isinstance(c, PropertyCard):
+          propertyy[0] += 1
+
+      print("money", money, "property", propertyy, "rent", rent, "action", action)
+
+      player.hand += self.deck.getCards(self.drawPerTurn)
+
+      print(player)
 
       for action in range(self.actionsPerTurn):
-        chosen_action = self.players[curr_player].chooseMove(self, self.actionsPerTurn - action)
+        chosen_action = player.chooseMove(self, self.actionsPerTurn - action)
 
         if isinstance(chosen_action, DoNothingAction):
           self.noOptionsCount += 1 if isinstance(chosen_action, DoNothingAction) else 0
@@ -76,21 +77,21 @@ class Game:
           self.noOptionsCount = 0
 
         print(chosen_action)
-        self.applyAction(chosen_action, self.players[curr_player])
+        self.applyAction(chosen_action, player)
 
-      self.players[curr_player].turnPassing()
+      player.turnPassing()
 
-      discarded_cards = self.players[curr_player].chooseWhatToDiscard(self)
+      discarded_cards = player.chooseWhatToDiscard(self)
       random.shuffle(discarded_cards)
       self.deck.deck += discarded_cards
 
-      print("")
-      self.players[curr_player].printInfo()
+      print(player)
 
       print("\n------- Turn Passing -------\n")
-      curr_player = (curr_player + 1) % len(self.players)
 
-  def getInstance(self, player_id):
+      player_index = (player_index + 1) % len(self.players)
+
+  def getInstance(self, player):
     instance = Game(len(self.players))
     instance.deck = copy.deepcopy(self.deck)
     instance.players = copy.deepcopy(self.players)
@@ -98,19 +99,19 @@ class Game:
 
     # The played doesn't have info about cards in opponent hand
     # So I need to blend it with the deck
-    cards_in_hand = []
-    for p in instance.players:
-      if p.id != player_id:
-        cards_in_hand.append([p.id, len(p.hand)])
-        instance.deck.deck += copy.deepcopy(p.hand)
-        p.hand = []
-
-    random.shuffle(instance.deck.deck)
-    for p in instance.players:
-      for c_in_hand in cards_in_hand:
-        if p.id == c_in_hand[0]:
-          p.hand += instance.deck.getCards(c_in_hand[1])
-          break
+    # cards_in_hand = []
+    # for p in instance.players:
+    #   if p.id != player_id:
+    #     cards_in_hand.append([p.id, len(p.hand)])
+    #     instance.deck.deck += copy.deepcopy(p.hand)
+    #     p.hand = []
+    #
+    # random.shuffle(instance.deck.deck)
+    # for p in instance.players:
+    #   for c_in_hand in cards_in_hand:
+    #     if p.id == c_in_hand[0]:
+    #       p.hand += instance.deck.getCards(c_in_hand[1])
+    #       break
 
     return instance
 
@@ -232,7 +233,6 @@ class Game:
       else:
         action.propertySet.addProperty(pr)
 
-      # Remove card from hand
       player.hand.remove(action.property)
     elif isinstance(action, AddMoneyAction):
       player.money.append(action.money)
@@ -254,11 +254,10 @@ class Game:
       self.deck.used_pile.append(copy.deepcopy(action.card))
       # Remove card from hand
       player.hand.remove(action.card)
-      player.recievePayment(payments)
+      player.recievePayment(self, payments)
     elif isinstance(action, DrawCardsAction):
       player.hand += self.deck.getCards(action.quantity)
       self.deck.used_pile.append(copy.deepcopy(action.card))
-      # Remove card from hand
       player.hand.remove(action.card)
     elif isinstance(action, AddHouseHotelAction):
       if action.house:
@@ -266,7 +265,6 @@ class Game:
       else:
         action.pSet.addHotel()
 
-      # Remove card from hand
       player.hand.remove(action.card)
     elif isinstance(action, StealPropertyAction):
       stolen_property = copy.deepcopy(action.property)
@@ -279,9 +277,8 @@ class Game:
           break
 
       self.deck.used_pile.append(copy.deepcopy(action.card))
-      # Remove card from hand
       player.hand.remove(action.card)
-      player.recievePayment([stolen_property])
+      player.recievePayment(self, [stolen_property])
     elif isinstance(action, StealPropertySetAction):
       stolen_set = copy.deepcopy(action.pSet)
       for p in other_players:
@@ -290,9 +287,8 @@ class Game:
           break
 
       self.deck.used_pile.append(copy.deepcopy(action.card))
-      # Remove card from hand
       player.hand.remove(action.card)
-      player.recievePayment([stolen_set])
+      player.recievePayment(self, [stolen_set])
     elif isinstance(action, SwapPropertyAction):
       stolen_property = copy.deepcopy(action.other)
       my_property = copy.deepcopy(action.mine)
@@ -307,14 +303,12 @@ class Game:
             if action.other in pSet.properties:
               pSet.properties.remove(action.other)
 
-          p.recievePayment([my_property])
+          p.recievePayment(self, [my_property])
 
       self.deck.used_pile.append(copy.deepcopy(action.card))
-      # Remove card from hand
       player.hand.remove(action.card)
-      player.recievePayment([stolen_property])
+      player.recievePayment(self, [stolen_property])
     elif isinstance(action, ApplyDoubleRent):
       player.doubleRent = True
       self.deck.used_pile.append(copy.deepcopy(action.card))
-      # Remove card from hand
       player.hand.remove(action.card)
