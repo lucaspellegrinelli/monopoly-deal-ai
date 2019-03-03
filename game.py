@@ -11,6 +11,8 @@ class Game:
     self.drawPerTurn = 2
     self.completedSetsToWin = 3
 
+    self.noOptionsCount = 0
+
     self.deck = Deck(ALL_CARDS)
     self.players = [Player(i, self.deck.getCards(self.startingHandCount)) for i in range(n_players)]
 
@@ -29,6 +31,10 @@ class Game:
 
       for action in range(self.actionsPerTurn):
         possible_moves = self.getPossibleMoves(self.players[curr_player])
+        if len(possible_moves) == 1:
+          self.noOptionsCount += 1
+        else:
+          self.noOptionsCount = 0
         chosen_action = self.players[curr_player].chooseMove(self.getInstance(), possible_moves, self.actionsPerTurn - action)
         print(chosen_action)
         self.applyAction(chosen_action, self.players[curr_player])
@@ -46,12 +52,17 @@ class Game:
       curr_player = (curr_player + 1) % len(self.players)
 
   def getInstance(self):
-    instance = Game(len(self.players))
-    instance.deck = copy.deepcopy(self.deck)
-    instance.players = copy.deepcopy(self.players)
-    return instance
+    # instance = Game(len(self.players))
+    # instance.deck = copy.deepcopy(self.deck)
+    # instance.players = copy.deepcopy(self.players)
+    # return instance
+    return 0
 
   def gameEnded(self):
+    if self.noOptionsCount >= len(self.players) * 3:
+      print("Ended on a Draw")
+      return True
+
     for player in self.players:
       completed_count = 0
       for pSet in player.sets:
