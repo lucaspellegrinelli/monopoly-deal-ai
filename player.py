@@ -14,6 +14,39 @@ class Player:
 
     self.doubleRent = False
 
+  def addToHand(self, cards):
+    self.hand += cards
+
+  def removeFromHand(self, card):
+    for c in self.hand:
+      if c.id == card.id:
+        self.hand.remove(c)
+        break
+
+  def addPropertySet(self, set):
+    self.sets.append(set)
+
+  def removePropertySet(self, set):
+    for s in self.sets:
+      if s.id == set.id:
+        self.sets.remove(s)
+        break
+
+  def hasPropertySet(self, set):
+    for s in self.sets:
+      if s.id == set.id:
+        return True
+    return False
+
+  def addToMoneyPile(self, card):
+    self.money.append(card)
+
+  def removeFromMoneyPile(self, card):
+    for c in self.money:
+      if c.id == card.id:
+        self.money.remove(c)
+        break
+
   def chooseMove(self, instance, moves_left):
     return self.ai.randomChooseMove(self, instance)
 
@@ -56,26 +89,8 @@ class Player:
   def __str__(self):
     final = ""
 
-    hand_str = ""
-    for card in self.hand:
-      if card != []:
-        hand_str += "[" + str(card.name) + "] "
-
-    final += "Player #" + str(self.id) + " Hand:\n" + hand_str + "\n"
-
-    money_str = ""
-    for money in self.money:
-      money_str += "[" + str(money.name) + "] "
-
-    final += "Player #" + str(self.id) + " Money Pile:\n" + money_str + "\n"
-
-    sets_str = ""
-    for pSet in self.sets:
-      sets_str += "["
-      for p in pSet.properties:
-        sets_str += "[" + str(p.name) + "]"
-      sets_str += "]\n"
-
-    final += "Player #" + str(self.id) + " Field:\n" + sets_str + "\n"
+    final += "Hand:\n\t" + str(self.hand) + "\n"
+    final += "Money:\n\t" + str(self.money) + "\n"
+    final += "Field:\n\t" + str(self.sets) + "\n"
 
     return final

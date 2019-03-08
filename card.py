@@ -9,8 +9,7 @@ class Card:
     self.value = value
 
   def __eq__(self, other):
-    return type(self) == type(other) and self.id == other.id and\
-           self.name == other.name and self.value == other.value
+    return type(self) == type(other) and self.id == other.id
 
   def __ne__(self, other):
     return not self.__eq__(other)
@@ -87,8 +86,12 @@ class Deck:
       cards.append(self.draw())
     return cards
 
+  def addToUsedPile(self, card):
+    self.used_pile.append(card)
+
 class PropertySet:
   def __init__(self, colors):
+    self.id = random.randint(-9999999, 9999999) # Should have better option
     self.properties = []
     self.colors = colors
     self.hasHouse = False
@@ -102,10 +105,12 @@ class PropertySet:
   def __ne__(self, other):
     return self.__eq__(other)
 
-  def addProperty(self, property):
+  def addProperty(self, property, player = -1):
     has_common_color = len(set(self.colors).intersection(property.colors)) > 0
     at_least_one_non_wild = self.numberOfProperties() == 0 or (len(self.colors) == 1 or len(property.colors) == 1)
     if self.canAddProperty(property):
+      if player != -1:
+        print("[Engine] Added " + str(property) + " to player #" + str(player.id))
       self.properties.append(property)
       self.colors = list(set(self.colors).intersection(property.colors))
     else:
@@ -118,6 +123,20 @@ class PropertySet:
       print("Number to complete: " + str(self.numberToComplete()))
       print("Number in this: " + str(self.numberOfProperties()))
       print("Is defined? " + str(self.isDefined()))
+
+  def removeProperty(self, property, player = -1):
+    for p in self.properties:
+      if p.id == property.id:
+        if player != -1:
+          print("[Engine] Removed " + str(p) + " from player #" + str(player.id))
+        self.properties.remove(p)
+        break
+
+  def hasProperty(self, property):
+    for p in self.properties:
+      if p.id == property.id:
+        return True
+    return False
 
   def numberOfProperties(self):
     return len(self.properties)
@@ -191,3 +210,6 @@ class PropertySet:
       has_common_color = len(set(self.colors).intersection(property.colors)) > 0
       at_least_one_non_wild = self.numberOfProperties() == 0 or (len(self.colors) == 1 or len(property.colors) == 1)
       return has_common_color and at_least_one_non_wild and not self.isCompleted()
+
+  def __repr__(self):
+    return str(self.properties) + "\n"

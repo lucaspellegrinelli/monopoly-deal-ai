@@ -18,14 +18,14 @@ class AI:
       if payed < how_much:
         payed += item.value
         payment.append(copy.deepcopy(item))
-        player.money.remove(item)
+        player.removeFromMoneyPile(item)
 
     for pSet in player.sets:
       for item in pSet.properties:
         if payed < how_much:
           payed += item.value
           payment.append(copy.deepcopy(item))
-          pSet.properties.remove(item)
+          pSet.removeProperty(item)
 
     return payment
 
@@ -48,14 +48,14 @@ class AI:
     for item in properties:
       for pSet in player.sets:
         if pSet.canAddProperty(item):
-          pSet.addProperty(item)
+          pSet.addProperty(item, player)
           added = True
           break
 
       if not added:
         pSet = PropertySet(item.colors)
-        pSet.addProperty(item)
-        player.sets.append(pSet)
+        pSet.addProperty(item, player)
+        player.addPropertySet(pSet)
 
   def getTurnPossibleMoves(self, instance, player):
     moves = []
