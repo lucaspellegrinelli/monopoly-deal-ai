@@ -78,13 +78,10 @@ class Player:
     self.cleanClearSets()
 
   def cleanClearSets(self):
-    rem = []
-    for pSet in self.sets:
-      if pSet.numberOfProperties() == 0:
-        rem.append(pSet)
-
-    for pSet in rem:
-      self.sets.remove(pSet)
+    if self.sets != []:
+      for i in range(len(self.sets) - 1, -1, -1):
+        if self.sets[i] == [] or self.sets[i].numberOfProperties() == 0:
+          del self.sets[i]
 
   def __str__(self):
     final = "Hand:\t" + str(self.hand) + "\n"
