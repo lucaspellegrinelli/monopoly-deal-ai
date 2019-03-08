@@ -70,6 +70,9 @@ class Deck:
     random.shuffle(self.deck)
     self.used_pile = []
 
+  def shuffle(self):
+    random.shuffle(self.deck)
+
   def draw(self):
     if len(self.deck) == 0 and len(self.used_pile) > 0:
       self.deck = copy.deepcopy(self.used_pile)
@@ -83,7 +86,10 @@ class Deck:
   def getCards(self, number):
     cards = []
     for i in range(number):
+      if len(self.deck) == 0 and len(self.used_pile) == 0:
+        break
       cards.append(self.draw())
+
     return cards
 
   def addToUsedPile(self, card):
@@ -105,12 +111,10 @@ class PropertySet:
   def __ne__(self, other):
     return self.__eq__(other)
 
-  def addProperty(self, property, player = -1):
+  def addProperty(self, property):
     has_common_color = len(set(self.colors).intersection(property.colors)) > 0
     at_least_one_non_wild = self.numberOfProperties() == 0 or (len(self.colors) == 1 or len(property.colors) == 1)
     if self.canAddProperty(property):
-      if player != -1:
-        print("[Engine] Added " + str(property) + " to player #" + str(player.id))
       self.properties.append(property)
       self.colors = list(set(self.colors).intersection(property.colors))
     else:
@@ -124,11 +128,9 @@ class PropertySet:
       print("Number in this: " + str(self.numberOfProperties()))
       print("Is defined? " + str(self.isDefined()))
 
-  def removeProperty(self, property, player = -1):
+  def removeProperty(self, property):
     for p in self.properties:
       if p.id == property.id:
-        if player != -1:
-          print("[Engine] Removed " + str(p) + " from player #" + str(player.id))
         self.properties.remove(p)
         break
 
@@ -212,4 +214,4 @@ class PropertySet:
       return has_common_color and at_least_one_non_wild and not self.isCompleted()
 
   def __repr__(self):
-    return str(self.properties) + "\n"
+    return str(self.properties)

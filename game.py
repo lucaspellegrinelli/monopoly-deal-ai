@@ -26,7 +26,9 @@ class Game:
       player = self.players[player_index]
       print("Player #" + str(player_index) + " turn\n")
       print("Deck size: " + str(len(self.deck.deck)))
+      #print("Deck: " + str(self.deck.deck))
       print("Discard size: " + str(len(self.deck.used_pile)))
+      #print("Discard: " + str(self.deck.used_pile))
       print("")
 
       t = self.deck.deck + self.deck.used_pile
@@ -74,15 +76,21 @@ class Game:
       print("money", money, "property", propertyy, "rent", rent, "action", action)
       print("")
 
-      player.addToHand(self.deck.getCards(self.drawPerTurn))
+      cards_drawn = self.deck.getCards(self.drawPerTurn)
+      print("Turn player drew " + str(cards_drawn))
+      player.addToHand(cards_drawn)
 
       print(player)
 
-      print("Actions:")
       for action in range(self.actionsPerTurn):
         chosen_action = player.chooseMove(self.getInstance(player), self.actionsPerTurn - action)
-        print("\t" + str(chosen_action))
-        self.noOptionsCount += 1 if isinstance(chosen_action, DoNothingAction) else 0
+        print("[Action] " + str(chosen_action))
+
+        if isinstance(chosen_action, DoNothingAction):
+          self.noOptionsCount += 1
+        else:
+          self.noOptionsCount = 0
+
         self.applyAction(chosen_action, player)
 
       print("")
@@ -106,19 +114,19 @@ class Game:
 
     # The played doesn't have info about cards in opponent hand
     # So I need to blend it with the deck
-    # cards_in_hand = []
-    # for p in instance.players:
-    #   if p.id != player_id:
-    #     cards_in_hand.append([p.id, len(p.hand)])
-    #     instance.deck.deck += copy.deepcopy(p.hand)
-    #     p.hand = []
-    #
-    # random.shuffle(instance.deck.deck)
-    # for p in instance.players:
-    #   for c_in_hand in cards_in_hand:
-    #     if p.id == c_in_hand[0]:
-    #       p.hand += instance.deck.getCards(c_in_hand[1])
-    #       break
+    cards_in_hand = []
+    for p in instance.players:
+      if p.id != player.id:
+        cards_in_hand.append([p.id, len(p.hand)])
+        instance.deck.deck += copy.deepcopy(p.hand)
+        p.hand = []
+
+    instance.deck.shuffle()
+    for p in instance.players:
+      for c_in_hand in cards_in_hand:
+        if p.id == c_in_hand[0]:
+          p.hand += instance.deck.getCards(c_in_hand[1])
+          break
 
     return instance
 
@@ -306,14 +314,14 @@ class Game:
 
       for pSet in player.sets:
         if pSet.hasProperty(action.mine):
-          pSet.removeProperty(action.mine, player)
+          pSet.removeProperty(action.mine)
           break
 
       for p in other_players:
         if p.id == action.other_id:
           for pSet in p.sets:
             if pSet.hasProperty(action.other):
-              pSet.removeProperty(action.other, p)
+              pSet.removeProperty(action.other)
               break
 
           p.recievePayment(self.getInstance(player), [my_property])

@@ -87,10 +87,8 @@ class Player:
       self.sets.remove(pSet)
 
   def __str__(self):
-    final = ""
-
-    final += "Hand:\n\t" + str(self.hand) + "\n"
-    final += "Money:\n\t" + str(self.money) + "\n"
-    final += "Field:\n\t" + str(self.sets) + "\n"
+    final = "Hand:\t" + str(self.hand) + "\n"
+    final += "Money:\t" + str(self.money) + "\n"
+    final += "Field:\t" + str(self.sets) + "\n"
 
     return final

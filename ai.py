@@ -44,17 +44,17 @@ class AI:
     return has_negate
 
   def randomRecievePayment(self, player, properties):
-    added = False
     for item in properties:
+      added = False
       for pSet in player.sets:
         if pSet.canAddProperty(item):
-          pSet.addProperty(item, player)
+          pSet.addProperty(item)
           added = True
           break
 
       if not added:
         pSet = PropertySet(item.colors)
-        pSet.addProperty(item, player)
+        pSet.addProperty(item)
         player.addPropertySet(pSet)
 
   def getTurnPossibleMoves(self, instance, player):
