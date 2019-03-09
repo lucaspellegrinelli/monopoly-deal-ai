@@ -1,17 +1,7 @@
-import time
-
 from monopoly.game import Game
 from monopoly.bots.random_ai import RandomAI
 
-def timeTest():
-  it = 100
-  start = time.time()
-  for i in range(it):
-    game = Game(5, RandomAI())
-    result = game.run()
-  print((time.time() - start) / it)
-
-if __name__ == '__main__':  
+if __name__ == '__main__':
   game = Game(5, RandomAI())
   result = game.run()
 
