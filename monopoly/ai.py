@@ -1,8 +1,8 @@
 class AI:
 
-  # ------------------------------ Function Role ------------------------------
+  # ------------------------------- Method Role -------------------------------
   #
-  # Choose what function the player will take next
+  # Choose what action the player will take next
   #
   # ----------------------- You'll need these functions -----------------------
   #
@@ -35,7 +35,7 @@ class AI:
   def chooseMove(self, instance, player_id, moves_left):
     raise NotImplementedError("Please implement the method 'chooseMove' in the subclass")
 
-  # ------------------------------ Function Role ------------------------------
+  # ------------------------------- Method Role -------------------------------
   #
   # Choose with what cards the player will pay a certain payment
   #
@@ -69,7 +69,7 @@ class AI:
   def choosePayment(self, instance, player_id, how_much):
     raise NotImplementedError("Please implement the method 'choosePayment' in the subclass")
 
-  # ------------------------------ Function Role ------------------------------
+  # ------------------------------- Method Role -------------------------------
   #
   # Choose what you'll discard after ending your turn with more than 7 cards.
   # You need to end up with 7 cards in hand.
@@ -102,7 +102,7 @@ class AI:
   def chooseWhatToDiscard(self, instance, player_id):
     raise NotImplementedError("Please implement the method 'chooseWhatToDiscard' in the subclass")
 
-  # ------------------------------ Function Role ------------------------------
+  # ------------------------------- Method Role -------------------------------
   #
   # Add the new properties to currently existing sets or create new sets to add
   # them.
@@ -150,7 +150,7 @@ class AI:
   def recievePayment(self, instance, player_id, properties):
     raise NotImplementedError("Please implement the method 'recievePayment' in the subclass")
 
-  # ------------------------------ Function Role ------------------------------
+  # ------------------------------- Method Role -------------------------------
   #
   # Deciding whether or not you'll negate the effect of a card thrown at you
   #
