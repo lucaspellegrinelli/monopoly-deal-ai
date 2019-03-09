@@ -10,8 +10,7 @@ from ..ai import AI
 class RandomAI(AI):
 
   def chooseMove(self, instance, player_id, moves_left):
-    player = instance.getPlayer(player_id)
-    possible_moves = instance.getTurnPossibleMoves(player)
+    possible_moves = instance.getTurnPossibleMoves(instance.getPlayer(player_id))
     return possible_moves[random.randint(0, len(possible_moves) - 1)]
 
   def choosePayment(self, instance, player_id, how_much):
@@ -22,13 +21,13 @@ class RandomAI(AI):
     for item in player.money:
       if payed < how_much:
         payed += item.value
-        payment.append(copy.deepcopy(item))
+        payment.append(item)
 
-    for pSet in player.sets:
-      for item in pSet.properties:
+    for p_set in player.sets:
+      for item in p_set.properties:
         if payed < how_much:
           payed += item.value
-          payment.append(copy.deepcopy(item))
+          payment.append(item)
         else:
           break
 
