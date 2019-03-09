@@ -91,7 +91,7 @@ class Game:
 
   def getTurnPossibleMoves(self, player):
     moves = []
-    moves.append(DoNothingAction(player))
+    moves.append(DoNothingAction(player.id))
 
     other_players_id = []
     other_players = []
