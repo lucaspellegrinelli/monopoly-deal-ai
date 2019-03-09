@@ -1,87 +1,36 @@
-from cardsdb import *
-from player import *
-from action import *
 import copy
 import random
 
+from cardsdb import *
+from action import *
+
+from player import Player
+from property_set import PropertySet
+from deck import Deck
+
 class Game:
-  def __init__(self, n_players):
+  def __init__(self, n_players, ai):
     self.actionsPerTurn = 3
     self.startingHandCount = 5
     self.drawPerTurn = 2
     self.completedSetsToWin = 3
-
+    self.ai = ai
     self.noOptionsCount = 0
-
     self.deck = Deck(ALL_CARDS)
-
-    self.players = []
-    for i in range(n_players):
-      self.players.append(Player(i, self.deck.getCards(self.startingHandCount)))
+    self.players = [Player(i, self.deck.getCards(self.startingHandCount), ai) for i in range(n_players)]
 
   def run(self):
     player_index = random.randint(0, len(self.players) - 1)
+    game_state = self.getGameState()
 
-    while not self.gameEnded():
+    while not game_state.ended:
+      print("\n--------- Turn Starting ---------\n")
       player = self.players[player_index]
       print("Player #" + str(player_index) + " turn\n")
-      print("Deck size: " + str(len(self.deck.deck)))
-      #print("Deck: " + str(self.deck.deck))
-      print("Discard size: " + str(len(self.deck.used_pile)))
-      #print("Discard: " + str(self.deck.used_pile))
-      print("")
-
-      t = self.deck.deck + self.deck.used_pile
-      for p in self.players:
-        t += p.hand
-        t += p.money
-        for s in p.sets:
-          t += s.properties
-
-      all_properties = []
-      all_properties_id = []
-      money = [0, 0]
-      action = [0, 0]
-      propertyy = [0, 0]
-      rent = [0, 0]
-
-      for c in ALL_CARDS:
-        if c == [] or c.id == HOTEL or c.id == HOUSE:
-          continue
-        if isinstance(c, MoneyCard):
-          money[1] += 1
-        if isinstance(c, RentCard):
-          rent[1] += 1
-        if isinstance(c, ActionCard):
-          action[1] += 1
-        if isinstance(c, PropertyCard):
-          all_properties.append(c)
-          all_properties_id.append(c.id)
-          propertyy[1] += 1
-
-      for c in t:
-        if c == [] or c.id == HOTEL or c.id == HOUSE:
-          continue
-        if isinstance(c, MoneyCard):
-          money[0] += 1
-        if isinstance(c, RentCard):
-          rent[0] += 1
-        if isinstance(c, ActionCard):
-          action[0] += 1
-        if isinstance(c, PropertyCard):
-          all_properties.append(c)
-          all_properties_id.append(c.id)
-          propertyy[0] += 1
-
-      print("money", money, "property", propertyy, "rent", rent, "action", action)
-      print("")
-
-      cards_drawn = self.deck.getCards(self.drawPerTurn)
-      print("Turn player drew " + str(cards_drawn))
-      player.addToHand(cards_drawn)
 
       print(player)
 
+      player.addToHand(self.deck.getCards(self.drawPerTurn))
       for action in range(self.actionsPerTurn):
         chosen_action = player.chooseMove(self.getInstance(player), self.actionsPerTurn - action)
         print("[Action] " + str(chosen_action))
@@ -93,21 +42,21 @@ class Game:
 
         self.applyAction(chosen_action, player)
 
-      print("")
-      player.turnPassing()
+      game_state = self.getGameState()
 
+      player.turnPassing()
       discarded_cards = player.chooseWhatToDiscard(self.getInstance(player))
-      random.shuffle(discarded_cards)
-      self.deck.deck += discarded_cards
 
       print(player)
 
-      print("\n------- Turn Passing -------\n")
-
+      random.shuffle(discarded_cards)
+      self.deck.deck += discarded_cards
       player_index = (player_index + 1) % len(self.players)
 
+    return game_state
+
   def getInstance(self, player):
-    instance = Game(len(self.players))
+    instance = Game(len(self.players), self.ai)
     instance.deck = copy.deepcopy(self.deck)
     instance.players = copy.deepcopy(self.players)
     instance.noOptionsCount = copy.deepcopy(self.noOptionsCount)
@@ -130,20 +79,15 @@ class Game:
 
     return instance
 
-  def gameEnded(self):
+  def getGameState(self):
     if self.noOptionsCount >= len(self.players) * 3:
-      print("Ended on a Draw")
-      return True
+      return EndGameResult(True, True)
 
     for player in self.players:
-      completed_count = 0
-      for pSet in player.sets:
-        if pSet.isCompleted():
-          completed_count += 1
-      if completed_count >= self.completedSetsToWin:
-        print("Player #" + str(player.id) + " won")
-        return True
-    return False
+      if player.hasWon():
+        return EndGameResult(True, False, player)
+
+    return EndGameResult(False)
 
   def getTurnPossibleMoves(self, player):
     moves = []
@@ -245,8 +189,8 @@ class Game:
         pSet = PropertySet(action.propertySet.colors)
         pSet.addProperty(pr)
         player.addPropertySet(pSet)
-      else:
-        action.propertySet.addProperty(pr)
+      elif player.hasPropertySet(action.propertySet):
+        player.addToPropertySet(action.propertySet, pr)
 
       player.removeFromHand(action.property)
     elif isinstance(action, AddMoneyAction):
@@ -335,3 +279,58 @@ class Game:
       self.deck.used_pile.append(copy.deepcopy(action.card))
       #player.hand.remove(action.card)
       player.removeFromHand(action.card)
+
+  def printCardQtdInfo(self):
+    print("Deck size: " + str(len(self.deck.deck)))
+    print("Discard size: " + str(len(self.deck.used_pile)))
+    print("")
+
+    t = self.deck.deck + self.deck.used_pile
+    for p in self.players:
+      t += p.hand
+      t += p.money
+      for s in p.sets:
+        t += s.properties
+
+    all_properties = []
+    all_properties_id = []
+    money = [0, 0]
+    action = [0, 0]
+    propertyy = [0, 0]
+    rent = [0, 0]
+
+    for c in ALL_CARDS:
+      if c == [] or c.id == HOTEL or c.id == HOUSE:
+        continue
+      if isinstance(c, MoneyCard):
+        money[1] += 1
+      if isinstance(c, RentCard):
+        rent[1] += 1
+      if isinstance(c, ActionCard):
+        action[1] += 1
+      if isinstance(c, PropertyCard):
+        all_properties.append(c)
+        all_properties_id.append(c.id)
+        propertyy[1] += 1
+
+    for c in t:
+      if c == [] or c.id == HOTEL or c.id == HOUSE:
+        continue
+      if isinstance(c, MoneyCard):
+        money[0] += 1
+      if isinstance(c, RentCard):
+        rent[0] += 1
+      if isinstance(c, ActionCard):
+        action[0] += 1
+      if isinstance(c, PropertyCard):
+        all_properties.append(c)
+        all_properties_id.append(c.id)
+        propertyy[0] += 1
+
+    print("money", money, "property", propertyy, "rent", rent, "action", action)
+
+class EndGameResult:
+  def __init__(self, ended, draw = None, player = None):
+    self.ended = ended
+    self.draw = draw
+    self.player = player

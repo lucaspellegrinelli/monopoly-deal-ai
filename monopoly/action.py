@@ -1,8 +1,11 @@
-class DoNothingAction:
+class Action:
+  pass
+
+class DoNothingAction(Action):
   def __repr__(self):
     return "Nothing"
 
-class PlayPropertyAction:
+class PlayPropertyAction(Action):
   def __init__(self, property, propertySet):
     self.property = property
     self.propertySet = propertySet
@@ -10,14 +13,14 @@ class PlayPropertyAction:
   def __repr__(self):
     return "Played " + self.property.name + " into a pSet with " + str(len(self.propertySet.properties)) + " properties"
 
-class AddMoneyAction:
+class AddMoneyAction(Action):
   def __init__(self, money):
     self.money = money
 
   def __repr__(self):
     return "Added " + str(self.money) + " to the money pile"
 
-class AskMoneyAction:
+class AskMoneyAction(Action):
   def __init__(self, card, money, targets):
     self.card = card
     self.money = money
@@ -26,7 +29,7 @@ class AskMoneyAction:
   def __repr__(self):
     return "Asked " + str(self.money) + " for " + str(len(self.targets)) + " players"
 
-class DrawCardsAction:
+class DrawCardsAction(Action):
   def __init__(self, card, quantity):
     self.card = card
     self.quantity = quantity
@@ -34,7 +37,7 @@ class DrawCardsAction:
   def __repr__(self):
     return "Drew " + str(self.quantity) + " cards"
 
-class AddHouseHotelAction:
+class AddHouseHotelAction(Action):
   def __init__(self, card, pSet, house):
     self.card = card
     self.pSet = pSet
@@ -43,7 +46,7 @@ class AddHouseHotelAction:
   def __repr__(self):
     return "Added a " + ("House" if self.house else "Hotel") + " to a set"
 
-class StealPropertyAction:
+class StealPropertyAction(Action):
   def __init__(self, card, property, owner):
     self.card = card
     self.property = property
@@ -52,7 +55,7 @@ class StealPropertyAction:
   def __repr__(self):
     return "Stole " + str(self.property.name) + " property from player #" + str(self.owner)
 
-class StealPropertySetAction:
+class StealPropertySetAction(Action):
   def __init__(self, card, pSet, owner):
     self.card = card
     self.pSet = pSet
@@ -61,7 +64,7 @@ class StealPropertySetAction:
   def __repr__(self):
     return "Stole pSet with " + str(len(self.pSet.properties)) + " properties from player #" + str(self.owner)
 
-class SwapPropertyAction:
+class SwapPropertyAction(Action):
   def __init__(self, card, mine, other, other_id):
     self.card = card
     self.mine = mine
@@ -71,7 +74,7 @@ class SwapPropertyAction:
   def __repr__(self):
     return "Swapped " + str(self.mine.name) + " to " + str(self.other.name)
 
-class ApplyDoubleRent:
+class ApplyDoubleRent(Action):
   def __init__(self, card):
     self.card = card
 
