@@ -10,6 +10,7 @@ class PropertySet:
     self.hasHouse = False
     self.hasHotel = False
 
+  # --------------------------- PROPERTY MANAGEMENT ---------------------------
   def addProperty(self, property):
     if self.canAddProperty(property):
       self.properties.append(property)
@@ -20,6 +21,21 @@ class PropertySet:
     at_least_one_non_wild = self.numberOfProperties() == 0 or (len(self.colors) == 1 or len(property.colors) == 1)
     return has_common_color and at_least_one_non_wild and not self.isCompleted()
 
+  def removeProperty(self, property):
+    # TODO: MAKE THIS WORK WITH "self.properties.remove(property)"
+    for p in self.properties:
+      if p.id == property.id:
+        self.properties.remove(p)
+        break
+
+  def hasProperty(self, property):
+    # TODO: MAKE THIS WORK WITH "property in self.properties"
+    for p in self.properties:
+      if p.id == property.id:
+        return True
+    return False
+
+  # ----------------------------------- UTIL -----------------------------------
   def numberOfProperties(self):
     return len(self.properties)
 
@@ -76,6 +92,7 @@ class PropertySet:
     else:
       print("Tried to add Hotel in non House set")
 
+  # ---------------------------------- TESTS ----------------------------------
   def isCompleted(self):
     return self.isDefined() and self.numberOfProperties() >= self.numberToComplete()
 
@@ -85,20 +102,7 @@ class PropertySet:
   def isUtility(self):
     return self.colors[0] == BLACK_PROPERTY or self.colors[0] == LIGHT_GREEN_PROPERTY
 
-  # TODO: MAKE THIS WORK WITH "self.properties.remove(property)"
-  def removeProperty(self, property):
-    for p in self.properties:
-      if p.id == property.id:
-        self.properties.remove(p)
-        break
-
-  # TODO: MAKE THIS WORK WITH "property in self.properties"
-  def hasProperty(self, property):
-    for p in self.properties:
-      if p.id == property.id:
-        return True
-    return False
-
+  # ------------------------ BUILT IN METHODS OVERRIDE ------------------------
   def __repr__(self):
     return str(self.properties)
 

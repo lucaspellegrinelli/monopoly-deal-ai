@@ -46,6 +46,9 @@ class Game:
 
         self.applyAction(chosen_action, player)
 
+        for p in self.players:
+          p.cleanClearSets()
+
       game_state = self.getGameState()
 
       player.turnPassing()
@@ -189,7 +192,7 @@ class Game:
         player.addPropertySet(p_set)
 
       elif player.hasPropertySet(action.property_set):
-        player.addToPropertySet(action.property_set, action.property)
+        player.givePropertyToSet(action.property_set, action.property)
 
       player.removeFromHand(action.property)
 
@@ -227,7 +230,7 @@ class Game:
 
       p = self.getPlayer(action.other_player_id)
       if not p.willNegate(self.getInstance(player), action):
-        p.removeGeneralProperty(action.property)
+        p.takeOutProperty(action.property)
         player.recievePayment(self.getInstance(player), [stolen_property])
 
       self.deck.addToUsedPile(action.card)
@@ -250,8 +253,8 @@ class Game:
 
       p = self.getPlayer(action.other_player_id)
       if not p.willNegate(self.getInstance(player), action):
-        player.removeGeneralProperty(action.my_property)
-        p.removeGeneralProperty(action.other_property)
+        player.takeOutProperty(action.my_property)
+        p.takeOutProperty(action.other_property)
         p.recievePayment(self.getInstance(player), [my_property])
         player.recievePayment(self.getInstance(player), [stolen_property])
 

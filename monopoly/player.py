@@ -17,6 +17,7 @@ class Player:
 
     self.doubleRent = False
 
+  # --------------------------------- AI STUFF --------------------------------
   def chooseMove(self, instance, moves_left):
     move = self.ai.chooseMove(instance, self.id, moves_left)
 
@@ -51,7 +52,6 @@ class Player:
         else:
           self.removeFromMoneyPile(card)
 
-    self.cleanClearSets()
     return payment
 
   def chooseWhatToDiscard(self, instance):
@@ -96,9 +96,8 @@ class Player:
       for action in actions:
         addressed_cards.append(action.property)
         addressed_cards_id.append(action.property.id)
-        self.addToPropertySet(action.property_set, action.property)
+        self.givePropertyToSet(action.property_set, action.property)
 
-      self.cleanClearSets()
       unaddressed_cards = [p for p in single_properties if p.id not in addressed_cards_id]
 
       if len(unaddressed_cards) > 0:
@@ -115,6 +114,7 @@ class Player:
     else:
       return False
 
+  # -------------------------------- UTIL --------------------------------------
   def turnPassing(self):
     self.doubleRent = False
     self.cleanClearSets()
@@ -122,26 +122,16 @@ class Player:
   def cleanClearSets(self):
     self.sets = [x for x in self.sets if x.numberOfProperties() > 0]
 
-  def addToHand(self, cards):
-    self.hand += cards
+  def hasWon(self):
+    completed = 0
+    for set in self.sets:
+      if set.isCompleted():
+        completed += 1
 
-  # TODO: MAKE THIS WORK WITH "self.hand.remove(card)"
-  def removeFromHand(self, card):
-    for c in self.hand:
-      if c.id == card.id:
-        self.hand.remove(c)
-        break
+    return completed >= 3
 
-  def addPropertySet(self, set):
-    self.sets.append(set)
-
-  def removePropertySet(self, set):
-    self.sets.remove(set)
-
-  def hasPropertySet(self, set):
-    return set in self.sets
-
-  def addToPropertySet(self, set, card):
+  # ----------------------------- CARD MANAGEMENT -----------------------------
+  def givePropertyToSet(self, set, card):
     if set.numberOfProperties() > 0:
       for s in self.sets:
         if s.id == set.id:
@@ -152,33 +142,46 @@ class Player:
       pSet.addProperty(card)
       self.addPropertySet(pSet)
 
-  def addToMoneyPile(self, card):
-    self.money.append(card)
-
-  # TODO: MAKE THIS WORK WITH "self.money.remove(card)"
-  def removeFromMoneyPile(self, card):
-    for c in self.money:
-      if c.id == card.id:
-        self.money.remove(c)
-        break
-
-  def removeGeneralProperty(self, property):
+  def takeOutProperty(self, property):
     for set in self.sets:
       if set.hasProperty(property):
         set.removeProperty(property)
         return
 
-  def hasWon(self):
-    completed = 0
-    for set in self.sets:
-      if set.isCompleted():
-        completed += 1
+  def addToHand(self, cards):
+    self.hand += cards
 
-    return completed >= 3
+  def removeFromHand(self, card):
+    # TODO: MAKE THIS WORK WITH "self.hand.remove(card)"
+    for c in self.hand:
+      if c.id == card.id:
+        self.hand.remove(c)
+        break
 
+  def addPropertySet(self, set):
+    self.sets.append(set)
+
+  def hasPropertySet(self, set):
+    return set in self.sets
+
+  def removePropertySet(self, set):
+    self.sets.remove(set)
+
+  def addToMoneyPile(self, card):
+    self.money.append(card)
+
+  def removeFromMoneyPile(self, card):
+    # TODO: MAKE THIS WORK WITH "self.money.remove(card)"
+    for c in self.money:
+      if c.id == card.id:
+        self.money.remove(c)
+        break
+
+  # --------------------------- INSTANCE MANAGEMENT ---------------------------
   def copy(self):
     return copy.deepcopy(self)
 
+  # ------------------------ BUILT IN METHODS OVERRIDE ------------------------
   def __str__(self):
     final = "\n- Hand :\t" + str(self.hand) + "\n"
     final += "- Money:\t" + str(self.money) + "\n"
