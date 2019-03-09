@@ -4,7 +4,7 @@ import random
 class Deck:
   def __init__(self, all_cards):
     self.deck = copy.deepcopy(all_cards)
-    random.shuffle(self.deck)
+    self.shuffle()
     self.used_pile = []
 
   def shuffle(self):

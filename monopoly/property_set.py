@@ -11,22 +11,9 @@ class PropertySet:
     self.hasHotel = False
 
   def addProperty(self, property):
-    has_common_color = len(set(self.colors).intersection(property.colors)) > 0
-    at_least_one_non_wild = self.numberOfProperties() == 0 or (len(self.colors) == 1 or len(property.colors) == 1)
-
     if self.canAddProperty(property):
       self.properties.append(property)
       self.colors = list(set(self.colors).intersection(property.colors))
-    else:
-      print("Tried to add property. Blocked.")
-      print("Property colors: " + str(property.colors))
-      print("Set colors: " + str(self.colors))
-      print("Has common color? " + str(has_common_color))
-      print("At least one non wild? " + str(at_least_one_non_wild))
-      print("Set Completed? " + str(self.isCompleted()))
-      print("Number to complete: " + str(self.numberToComplete()))
-      print("Number in this: " + str(self.numberOfProperties()))
-      print("Is defined? " + str(self.isDefined()))
 
   def canAddProperty(self, property):
     if self.colors[0] == 10:
@@ -101,12 +88,14 @@ class PropertySet:
   def isUtility(self):
     return self.colors[0] == BLACK_PROPERTY or self.colors[0] == LIGHT_GREEN_PROPERTY
 
+  # TODO: MAKE THIS WORK WITH "self.properties.remove(property)"
   def removeProperty(self, property):
     for p in self.properties:
       if p.id == property.id:
         self.properties.remove(p)
         break
 
+  # TODO: MAKE THIS WORK WITH "property in self.properties"
   def hasProperty(self, property):
     for p in self.properties:
       if p.id == property.id:
@@ -117,9 +106,7 @@ class PropertySet:
     return str(self.properties)
 
   def __eq__(self, other):
-    return type(self) == type(other) and self.properties == other.properties and\
-           self.colors == other.colors and self.hasHouse == other.hasHouse and\
-           self.hasHotel == other.hasHotel
+    return self.id == other.id
 
   def __ne__(self, other):
-    return self.__eq__(other)
+    return not self.__eq__(other)

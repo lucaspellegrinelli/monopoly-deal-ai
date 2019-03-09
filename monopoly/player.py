@@ -43,17 +43,15 @@ class Player:
 
       for card in payment:
         payed += card.value
-
-      for card in payment:
         if isinstance(card, PropertyCard):
           for set in self.sets:
             if set.hasProperty(card):
               set.removeProperty(card)
-              self.cleanClearSets()
               break
         else:
           self.removeFromMoneyPile(card)
 
+    self.cleanClearSets()
     return payment
 
   def chooseWhatToDiscard(self, instance):
@@ -94,37 +92,24 @@ class Player:
         on the fact that in this iteration it didn't).")
 
       addressed_cards = []
+      addressed_cards_id = []
       for action in actions:
         addressed_cards.append(action.property)
+        addressed_cards_id.append(action.property.id)
         self.addToPropertySet(action.property_set, action.property)
 
-      unaddressed_cards = []
-      for p in single_properties:
-        addressed = False
-        for ac in addressed_cards:
-          if p.id == ac.id:
-            addressed = True
-            break
-        if not addressed:
-          unaddressed_cards.append(p)
+      unaddressed_cards = [p for p in single_properties if p.id not in addressed_cards_id]
 
       if len(unaddressed_cards) > 0:
         self.recievePayment(instance, unaddressed_cards)
 
   def willNegate(self, instance, action):
-    has_negate = False
-    for card in self.hand:
-      if card != [] and card.id == JUST_SAY_NO:
-        has_negate = True
-        break
+    has_negate = len([c for c in self.hand if c.id == JUST_SAY_NO]) > 0
 
     if has_negate:
       negate = self.ai.willNegate(instance, self.id, action)
-
       if negate != True and negate != False:
-        raise RuntimeError("In the 'willNegate' method, the return value was not a \
-                            boolean.")
-
+        raise RuntimeError("In the 'willNegate' method, the return value was not a boolean.")
       return negate
     else:
       return False
@@ -134,14 +119,12 @@ class Player:
     self.cleanClearSets()
 
   def cleanClearSets(self):
-    if self.sets != []:
-      for i in range(len(self.sets) - 1, -1, -1):
-        if self.sets[i] == [] or self.sets[i].numberOfProperties() == 0:
-          del self.sets[i]
+    self.sets = [x for x in self.sets if x.numberOfProperties() > 0]
 
   def addToHand(self, cards):
     self.hand += cards
 
+  # TODO: MAKE THIS WORK WITH "self.hand.remove(card)"
   def removeFromHand(self, card):
     for c in self.hand:
       if c.id == card.id:
@@ -152,16 +135,10 @@ class Player:
     self.sets.append(set)
 
   def removePropertySet(self, set):
-    for s in self.sets:
-      if s.id == set.id:
-        self.sets.remove(s)
-        break
+    self.sets.remove(set)
 
   def hasPropertySet(self, set):
-    for s in self.sets:
-      if s.id == set.id:
-        return True
-    return False
+    return set in self.sets
 
   def addToPropertySet(self, set, card):
     if set.numberOfProperties() > 0:
@@ -177,11 +154,18 @@ class Player:
   def addToMoneyPile(self, card):
     self.money.append(card)
 
+  # TODO: MAKE THIS WORK WITH "self.money.remove(card)"
   def removeFromMoneyPile(self, card):
     for c in self.money:
       if c.id == card.id:
         self.money.remove(c)
         break
+
+  def removeGeneralProperty(self, property):
+    for set in self.sets:
+      if set.hasProperty(property):
+        set.removeProperty(property)
+        return
 
   def hasWon(self):
     completed = 0
