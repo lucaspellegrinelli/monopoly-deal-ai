@@ -16,12 +16,9 @@ class PropertySet:
       self.colors = list(set(self.colors).intersection(property.colors))
 
   def canAddProperty(self, property):
-    if self.colors[0] == 10:
-      return self.numberOfProperties() > 0 and self.isDefined()
-    else:
-      has_common_color = len(set(self.colors).intersection(property.colors)) > 0
-      at_least_one_non_wild = self.numberOfProperties() == 0 or (len(self.colors) == 1 or len(property.colors) == 1)
-      return has_common_color and at_least_one_non_wild and not self.isCompleted()
+    has_common_color = len(set(self.colors).intersection(property.colors)) > 0
+    at_least_one_non_wild = self.numberOfProperties() == 0 or (len(self.colors) == 1 or len(property.colors) == 1)
+    return has_common_color and at_least_one_non_wild and not self.isCompleted()
 
   def numberOfProperties(self):
     return len(self.properties)
@@ -83,7 +80,7 @@ class PropertySet:
     return self.isDefined() and self.numberOfProperties() >= self.numberToComplete()
 
   def isDefined(self):
-    return len(self.colors) == 1
+    return len(self.colors) == 1 and self.colors[0] != RAINBOW_PROPERTY
 
   def isUtility(self):
     return self.colors[0] == BLACK_PROPERTY or self.colors[0] == LIGHT_GREEN_PROPERTY

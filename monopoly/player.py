@@ -98,6 +98,7 @@ class Player:
         addressed_cards_id.append(action.property.id)
         self.addToPropertySet(action.property_set, action.property)
 
+      self.cleanClearSets()
       unaddressed_cards = [p for p in single_properties if p.id not in addressed_cards_id]
 
       if len(unaddressed_cards) > 0:

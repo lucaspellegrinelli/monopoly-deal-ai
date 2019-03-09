@@ -102,8 +102,8 @@ class Game:
 
     for card in player.hand:
       if isinstance(card, PropertyCard):
-        if not card.isRainbow():
-          moves.append(PlayPropertyAction(player.id, card, PropertySet(card.colors)))
+        moves.append(PlayPropertyAction(player.id, card, PropertySet(card.colors)))
+
         for property_set in player.sets:
           if property_set.canAddProperty(card):
             moves.append(PlayPropertyAction(player.id, card, property_set))
