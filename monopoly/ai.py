@@ -1,4 +1,8 @@
+# - Abstract class of an Artificial Intellience
 class AI:
+
+  # - TODO
+  # --- Window for the AI to rearrange its wildcard properties
 
   # ------------------------------- Method Role -------------------------------
   #
