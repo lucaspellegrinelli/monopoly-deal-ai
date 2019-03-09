@@ -27,10 +27,13 @@ class Game:
       print("\n--------- Turn Starting ---------\n")
       player = self.players[player_index]
       print("Player #" + str(player_index) + " turn\n")
+      print("Deck size: " + str(len(self.deck.deck)))
+      print("Discard size: " + str(len(self.deck.used_pile)) + "\n")
+
+      player.addToHand(self.deck.getCards(self.drawPerTurn))
 
       print(player)
 
-      player.addToHand(self.deck.getCards(self.drawPerTurn))
       for action in range(self.actionsPerTurn):
         chosen_action = player.chooseMove(self.getInstance(player), self.actionsPerTurn - action)
         print("[Action] " + str(chosen_action))
@@ -122,11 +125,11 @@ class Game:
         moves.append(AddMoneyAction(player.id, card))
         if card.id == DEBT_COLLECTOR:
           # Force someone to give you 5M
-          for op in other_players:
+          for op in other_players_id:
             moves.append(AskMoneyAction(player.id, card, 5, [op]))
         elif card.id == ITS_MY_BIRTHDAY:
           # Get 2M from everyone
-          moves.append(AskMoneyAction(player.id, card, 2, other_players))
+          moves.append(AskMoneyAction(player.id, card, 2, other_players_id))
         elif card.id == PASS_GO:
           # Draws 2 cards
           moves.append(DrawCardsAction(player.id, card, 2))
@@ -185,12 +188,12 @@ class Game:
 
     if isinstance(action, PlayPropertyAction):
       pr = copy.deepcopy(action.property)
-      if len(action.propertySet.properties) == 0:
-        pSet = PropertySet(action.propertySet.colors)
+      if len(action.property_set.properties) == 0:
+        pSet = PropertySet(action.property_set.colors)
         pSet.addProperty(pr)
         player.addPropertySet(pSet)
-      elif player.hasPropertySet(action.propertySet):
-        player.addToPropertySet(action.propertySet, pr)
+      elif player.hasPropertySet(action.property_set):
+        player.addToPropertySet(action.property_set, pr)
 
       player.removeFromHand(action.property)
 
@@ -223,9 +226,9 @@ class Game:
 
     elif isinstance(action, AddHouseHotelAction):
       if action.house:
-        action.pSet.addHouse()
+        action.property_set.addHouse()
       else:
-        action.pSet.addHotel()
+        action.property_set.addHotel()
 
       player.removeFromHand(action.card)
 
@@ -233,7 +236,7 @@ class Game:
       negated = False
       stolen_property = copy.deepcopy(action.property)
       for p in other_players:
-        if p.id == action.owner:
+        if p.id == action.other_player_id:
           if p.willNegate(self.getInstance(player), action):
             negated = True
             break
@@ -252,13 +255,13 @@ class Game:
 
     elif isinstance(action, StealPropertySetAction):
       negated = False
-      stolen_set = copy.deepcopy(action.pSet)
+      stolen_set = copy.deepcopy(action.property_set)
       for p in other_players:
-        if p.id == action.owner and p.hasPropertySet(action.pSet):
+        if p.id == action.other_player_id and p.hasPropertySet(action.property_set):
           if p.willNegate(self.getInstance(player), action):
             negated = True
           else:
-            p.removePropertySet(action.pSet)
+            p.removePropertySet(action.property_set)
           break
 
       if not negated:
@@ -269,23 +272,23 @@ class Game:
 
     elif isinstance(action, SwapPropertyAction):
       negated = False
-      stolen_property = copy.deepcopy(action.other)
-      my_property = copy.deepcopy(action.mine)
+      stolen_property = copy.deepcopy(action.other_property)
+      my_property = copy.deepcopy(action.my_property)
 
       for pSet in player.sets:
-        if pSet.hasProperty(action.mine):
-          pSet.removeProperty(action.mine)
+        if pSet.hasProperty(action.my_property):
+          pSet.removeProperty(action.my_property)
           break
 
       for p in other_players:
-        if p.id == action.other_id:
+        if p.id == action.other_player_id:
           if p.willNegate(self.getInstance(player), action):
             negated = True
             break
 
           for pSet in p.sets:
-            if pSet.hasProperty(action.other):
-              pSet.removeProperty(action.other)
+            if pSet.hasProperty(action.other_property):
+              pSet.removeProperty(action.other_property)
               break
 
           if not negated:
@@ -308,10 +311,6 @@ class Game:
         return p
 
   def printCardQtdInfo(self):
-    print("Deck size: " + str(len(self.deck.deck)))
-    print("Discard size: " + str(len(self.deck.used_pile)))
-    print("")
-
     t = self.deck.deck + self.deck.used_pile
     for p in self.players:
       t += p.hand

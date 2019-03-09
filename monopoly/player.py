@@ -96,7 +96,7 @@ class Player:
       addressed_cards = []
       for action in actions:
         addressed_cards.append(action.property)
-        self.addToPropertySet(action.propertySet, action.property)
+        self.addToPropertySet(action.property_set, action.property)
 
       unaddressed_cards = []
       for p in single_properties:
