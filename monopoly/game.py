@@ -91,7 +91,7 @@ class Game:
 
   def getTurnPossibleMoves(self, player):
     moves = []
-    moves.append(DoNothingAction())
+    moves.append(DoNothingAction(player))
 
     other_players_id = []
     other_players = []
@@ -103,56 +103,56 @@ class Game:
     for card in player.hand:
       if isinstance(card, PropertyCard):
         if not card.isRainbow():
-          moves.append(PlayPropertyAction(card, PropertySet(card.colors)))
+          moves.append(PlayPropertyAction(player.id, card, PropertySet(card.colors)))
         for pSet in player.sets:
           if pSet.canAddProperty(card):
-            moves.append(PlayPropertyAction(card, pSet))
+            moves.append(PlayPropertyAction(player.id, card, pSet))
       elif isinstance(card, MoneyCard):
-        moves.append(AddMoneyAction(card))
+        moves.append(AddMoneyAction(player.id, card))
       elif isinstance(card, RentCard):
-        moves.append(AddMoneyAction(card))
+        moves.append(AddMoneyAction(player.id, card))
         for pSet in player.sets:
           if pSet.isDefined() and pSet.rentValue() > 0:
             if card.wild:
               for opid in other_players_id:
-                moves.append(AskMoneyAction(card, pSet.rentValue() * (2 if player.doubleRent else 1), [opid]))
+                moves.append(AskMoneyAction(player.id, card, pSet.rentValue() * (2 if player.doubleRent else 1), [opid]))
             elif pSet.colors[0] in card.colors:
-              moves.append(AskMoneyAction(card, pSet.rentValue() * (2 if player.doubleRent else 1), other_players_id))
+              moves.append(AskMoneyAction(player.id, card, pSet.rentValue() * (2 if player.doubleRent else 1), other_players_id))
       elif isinstance(card, ActionCard):
-        moves.append(AddMoneyAction(card))
+        moves.append(AddMoneyAction(player.id, card))
         if card.id == DEBT_COLLECTOR:
           # Force someone to give you 5M
           for op in other_players:
-            moves.append(AskMoneyAction(card, 5, [op]))
+            moves.append(AskMoneyAction(player.id, card, 5, [op]))
         elif card.id == ITS_MY_BIRTHDAY:
           # Get 2M from everyone
-          moves.append(AskMoneyAction(card, 2, other_players))
+          moves.append(AskMoneyAction(player.id, card, 2, other_players))
         elif card.id == PASS_GO:
           # Draws 2 cards
-          moves.append(DrawCardsAction(card, 2))
+          moves.append(DrawCardsAction(player.id, card, 2))
         elif card.id == HOUSE:
           # Increases rent value for completed set
           for pSet in player.sets:
             if pSet.isCompleted() and not pSet.isUtility():
-              moves.append(AddHouseHotelAction(card, pSet, True))
+              moves.append(AddHouseHotelAction(player.id, card, pSet, True))
         elif card.id == HOTEL:
           # Increases rent value for houses
           for pSet in player.sets:
             if pSet.hasHouse:
-              moves.append(AddHouseHotelAction(card, pSet, False))
+              moves.append(AddHouseHotelAction(player.id, card, pSet, False))
         elif card.id == SLY_DEAL:
           # Steals a single property from a non completed set
           for op in other_players:
             for pSet in op.sets:
               if not pSet.isCompleted():
                 for property in pSet.properties:
-                  moves.append(StealPropertyAction(card, property, op.id))
+                  moves.append(StealPropertyAction(player.id, card, property, op.id))
         elif card.id == DEAL_BREAKER:
           # Steals a completed property set
           for op in other_players:
             for pSet in op.sets:
               if pSet.isCompleted():
-                moves.append(StealPropertySetAction(card, pSet, op.id))
+                moves.append(StealPropertySetAction(player.id, card, pSet, op.id))
         elif card.id == FORCED_DEAL:
           # Forces swap between one of your properties and someone elses property
           my_properties = []
@@ -168,10 +168,10 @@ class Game:
 
           for myP in my_properties:
             for otherP in other_properties:
-              moves.append(SwapPropertyAction(card, myP, otherP[0], otherP[1]))
+              moves.append(SwapPropertyAction(player.id, card, myP, otherP[0], otherP[1]))
         elif card.id == DOUBLE_RENT:
           # Doubles the next rent card played this turn
-          moves.append(ApplyDoubleRent(card))
+          moves.append(ApplyDoubleRent(player.copy(), card))
 
     return moves
 
@@ -193,15 +193,16 @@ class Game:
         player.addToPropertySet(action.propertySet, pr)
 
       player.removeFromHand(action.property)
+
     elif isinstance(action, AddMoneyAction):
       player.addToMoneyPile(action.money)
       player.removeFromHand(action.money)
+
     elif isinstance(action, AskMoneyAction):
       payments = []
       for p in self.players:
         if p.id in action.targets:
-          if p.willNegate(self.getInstance(player)):
-            print("Player #" + str(p.id) + " negated the effect!")
+          if p.willNegate(self.getInstance(player), action):
             for c_hand in p.hand:
               if c_hand.id == JUST_SAY_NO:
                 self.deck.addToUsedPile(copy.deepcopy(c_hand))
@@ -227,32 +228,47 @@ class Game:
         action.pSet.addHotel()
 
       player.removeFromHand(action.card)
+
     elif isinstance(action, StealPropertyAction):
+      negated = False
       stolen_property = copy.deepcopy(action.property)
       for p in other_players:
         if p.id == action.owner:
+          if p.willNegate(self.getInstance(player), action):
+            negated = True
+            break
+
           for pSet in p.sets:
             if pSet.hasProperty(action.property):
               pSet.removeProperty(action.property)
               break
           break
 
-      self.deck.addToUsedPile(copy.deepcopy(action.card))
+      if not negated:
+        player.recievePayment(self.getInstance(player), [stolen_property])
 
+      self.deck.addToUsedPile(copy.deepcopy(action.card))
       player.removeFromHand(action.card)
-      player.recievePayment(self.getInstance(player), [stolen_property])
+
     elif isinstance(action, StealPropertySetAction):
+      negated = False
       stolen_set = copy.deepcopy(action.pSet)
       for p in other_players:
         if p.id == action.owner and p.hasPropertySet(action.pSet):
-          p.removePropertySet(action.pSet)
+          if p.willNegate(self.getInstance(player), action):
+            negated = True
+          else:
+            p.removePropertySet(action.pSet)
           break
 
-      self.deck.addToUsedPile(copy.deepcopy(action.card))
+      if not negated:
+        player.recievePayment(self.getInstance(player), [stolen_set])
 
+      self.deck.addToUsedPile(copy.deepcopy(action.card))
       player.removeFromHand(action.card)
-      player.recievePayment(self.getInstance(player), [stolen_set])
+
     elif isinstance(action, SwapPropertyAction):
+      negated = False
       stolen_property = copy.deepcopy(action.other)
       my_property = copy.deepcopy(action.mine)
 
@@ -263,22 +279,33 @@ class Game:
 
       for p in other_players:
         if p.id == action.other_id:
+          if p.willNegate(self.getInstance(player), action):
+            negated = True
+            break
+
           for pSet in p.sets:
             if pSet.hasProperty(action.other):
               pSet.removeProperty(action.other)
               break
 
-          p.recievePayment(self.getInstance(player), [my_property])
+          if not negated:
+            p.recievePayment(self.getInstance(player), [my_property])
+
+      if not negated:
+        player.recievePayment(self.getInstance(player), [stolen_property])
 
       self.deck.addToUsedPile(copy.deepcopy(action.card))
-
       player.removeFromHand(action.card)
-      player.recievePayment(self.getInstance(player), [stolen_property])
+
     elif isinstance(action, ApplyDoubleRent):
       player.doubleRent = True
       self.deck.used_pile.append(copy.deepcopy(action.card))
-      #player.hand.remove(action.card)
       player.removeFromHand(action.card)
+
+  def getPlayer(self, player_id):
+    for p in self.players:
+      if p.id == player_id:
+        return p
 
   def printCardQtdInfo(self):
     print("Deck size: " + str(len(self.deck.deck)))

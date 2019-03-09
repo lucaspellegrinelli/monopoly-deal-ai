@@ -17,8 +17,8 @@ class AI:
   # - INPUTS
   # --- instance: Game
   # ------ The instance of the game
-  # --- player: Player
-  # ------ A copy of the player object
+  # --- player_id: integer
+  # ------ The id of the player
   # --- moves_left: integer
   # ------ How many moves left the player still has in his turn
   #
@@ -32,7 +32,7 @@ class AI:
   # the replacement.
   #
   # ---------------------------------------------------------------------------
-  def chooseMove(self, instance, player, moves_left):
+  def chooseMove(self, instance, player_id, moves_left):
     raise NotImplementedError("Please implement the method 'chooseMove' in the subclass")
 
   # ------------------------------ Function Role ------------------------------
@@ -48,8 +48,8 @@ class AI:
   # - INPUTS
   # --- instance: Game
   # ------ The instance of the game
-  # --- player: Player
-  # ------ A copy of the player object
+  # --- player_id: integer
+  # ------ The id of the player
   # --- how_much: integer
   # ------ How many "money" you need to pay
   #
@@ -66,7 +66,7 @@ class AI:
   # - If no cards are returned, an exception will be raised
   #
   # ---------------------------------------------------------------------------
-  def choosePayment(self, instance, player, how_much):
+  def choosePayment(self, instance, player_id, how_much):
     raise NotImplementedError("Please implement the method 'choosePayment' in the subclass")
 
   # ------------------------------ Function Role ------------------------------
@@ -83,8 +83,8 @@ class AI:
   # - INPUTS
   # --- instance: Game
   # ------ The instance of the game
-  # --- player: Player
-  # ------ A copy of A copy of the player object
+  # --- player_id: integer
+  # ------ The id of the player
   #
   # - OUTPUT
   # --- cards: list of Card
@@ -99,7 +99,7 @@ class AI:
   # - If this doesn't return any cards, an exception will be raised
   #
   # ---------------------------------------------------------------------------
-  def chooseWhatToDiscard(self, instance, player):
+  def chooseWhatToDiscard(self, instance, player_id):
     raise NotImplementedError("Please implement the method 'chooseWhatToDiscard' in the subclass")
 
   # ------------------------------ Function Role ------------------------------
@@ -129,8 +129,8 @@ class AI:
   # - INPUTS
   # --- instance: Game
   # ------ The instance of the game
-  # --- player: Player
-  # ------ A copy of the player object
+  # --- player_id: integer
+  # ------ The id of the player
   # --- properties: list of PropertyCard
   # ------ The properties you recieved as payment (other cards are already
   #        processed)
@@ -147,7 +147,7 @@ class AI:
   # - If there aren't any actions returned, an exception will be raised.
   #
   # ---------------------------------------------------------------------------
-  def recievePayment(self, instance, player, properties):
+  def recievePayment(self, instance, player_id, properties):
     raise NotImplementedError("Please implement the method 'recievePayment' in the subclass")
 
   # ------------------------------ Function Role ------------------------------
@@ -156,15 +156,34 @@ class AI:
   #
   # ----------------------- You'll need these functions -----------------------
   #
-  # - N/A
+  # - Action.who_used: Player
+  # --- The copy of the player that used that card
+  #
+  # - isinstance(action, StealPropertyAction)
+  # --- Test if its a Sly Deal card
+  # --- See more attributes of this action in action.py
+  #
+  # - isinstance(action, StealPropertySetAction)
+  # --- Test if its a Deal Breaker card
+  # --- See more attributes of this action in action.py
+  #
+  # - isinstance(action, SwapPropertyAction)
+  # --- Test if its a Froced Deal card
+  # --- See more attributes of this action in action.py
+  #
+  # - isinstance(action, AskMoneyAction)
+  # --- Test if its an action that gets money from you (rent, birthday, ...)
+  # --- See more attributes of this action in action.py
   #
   # ----------------------------- Inputs/Outputs -----------------------------
   #
   # - INPUTS
   # --- instance: Game
   # ------ The instance of the game
-  # --- player: Player
-  # ------ A copy of the player object
+  # --- player_id: integer
+  # ------ The id of the player
+  # --- action: Action
+  # ------ The action to negate (or not)
   #
   # - OUTPUT
   # --- will_negate: boolean
@@ -175,5 +194,5 @@ class AI:
   # If the return value is not a boolean, an exception will be raised
   #
   # ---------------------------------------------------------------------------
-  def willNegate(self, instance, player):
+  def willNegate(self, instance, player_id, action):
     raise NotImplementedError("Please implement the method 'willNegate' in the subclass")

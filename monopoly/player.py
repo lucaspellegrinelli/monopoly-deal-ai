@@ -18,7 +18,7 @@ class Player:
     self.doubleRent = False
 
   def chooseMove(self, instance, moves_left):
-    move = self.ai.chooseMove(instance, self.copy(), moves_left)
+    move = self.ai.chooseMove(instance, self.id, moves_left)
 
     if not isinstance(move, Action):
       move = DoNothingAction()
@@ -30,7 +30,7 @@ class Player:
     payed = 0
 
     while payed < how_much and len(self.money) > 0 and len(self.sets) > 0:
-      this_it_pay = self.ai.choosePayment(instance, self.copy(), how_much)
+      this_it_pay = self.ai.choosePayment(instance, self.id, how_much)
 
       if len(this_it_pay) == 0:
         raise RuntimeError("The method 'choosePayment' didn't choose enough cards \
@@ -59,7 +59,7 @@ class Player:
   def chooseWhatToDiscard(self, instance):
     discarded = []
     while len(self.hand) > 7:
-      discarded += self.ai.chooseWhatToDiscard(instance, self.copy())
+      discarded += self.ai.chooseWhatToDiscard(instance, self.id)
 
       if len(discarded) == 0:
         raise RuntimeError("You didn't discard enough in the 'chooseWhatToDiscard' \
@@ -84,7 +84,7 @@ class Player:
         self.sets.append(item)
 
     if single_properties:
-      actions = self.ai.recievePayment(instance, self, single_properties)
+      actions = self.ai.recievePayment(instance, self.id, single_properties)
 
       if len(actions) == 0:
         raise RuntimeError("There are properties unaddressed in 'recievePayment' \
@@ -111,14 +111,23 @@ class Player:
       if len(unaddressed_cards) > 0:
         self.recievePayment(instance, unaddressed_cards)
 
-  def willNegate(self, instance):
-    negate = self.ai.willNegate(instance, self.copy())
+  def willNegate(self, instance, action):
+    has_negate = False
+    for card in self.hand:
+      if card != [] and card.id == JUST_SAY_NO:
+        has_negate = True
+        break
 
-    if negate != True and negate != False:
-      raise RuntimeError("In the 'willNegate' method, the return value was not a \
-                          boolean.")
+    if has_negate:
+      negate = self.ai.willNegate(instance, self.id, action)
 
-    return negate
+      if negate != True and negate != False:
+        raise RuntimeError("In the 'willNegate' method, the return value was not a \
+                            boolean.")
+
+      return negate
+    else:
+      return False
 
   def turnPassing(self):
     self.doubleRent = False
