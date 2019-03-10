@@ -54,6 +54,10 @@ class AI:
   # ------ The instance of the game
   # --- player_id: integer
   # ------ The id of the player
+  # --- player_sets: list of PropertySet
+  # ------ All the properties the player controls
+  # --- player_money_pile: list of Card
+  # ------ All cards in the player money pile
   # --- how_much: integer
   # ------ How many "money" you need to pay
   #
@@ -70,7 +74,7 @@ class AI:
   # - If no cards are returned, an exception will be raised
   #
   # ---------------------------------------------------------------------------
-  def choosePayment(self, instance, player_id, how_much):
+  def choosePayment(self, instance, player_id, player_sets, player_money_pile, how_much):
     raise NotImplementedError("Please implement the method 'choosePayment' in the subclass")
 
   # ------------------------------- Method Role -------------------------------
@@ -103,7 +107,7 @@ class AI:
   # - If this doesn't return any cards, an exception will be raised
   #
   # ---------------------------------------------------------------------------
-  def chooseWhatToDiscard(self, instance, player_id):
+  def chooseWhatToDiscard(self, instance, player_id, player_hand):
     raise NotImplementedError("Please implement the method 'chooseWhatToDiscard' in the subclass")
 
   # ------------------------------- Method Role -------------------------------

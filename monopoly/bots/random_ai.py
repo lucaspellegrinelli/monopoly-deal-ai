@@ -13,17 +13,16 @@ class RandomAI(AI):
     possible_moves = instance.getTurnPossibleMoves(instance.getPlayer(player_id))
     return possible_moves[random.randint(0, len(possible_moves) - 1)]
 
-  def choosePayment(self, instance, player_id, how_much):
-    player = instance.getPlayer(player_id)
+  def choosePayment(self, instance, player_id, player_sets, player_money_pile, how_much):
     payment = []
     payed = 0
 
-    for item in player.money:
+    for item in player_money_pile:
       if payed < how_much:
         payed += item.value
         payment.append(item)
 
-    for p_set in player.sets:
+    for p_set in player_sets:
       for item in p_set.properties:
         if payed < how_much:
           payed += item.value
@@ -33,11 +32,11 @@ class RandomAI(AI):
 
     return payment
 
-  def chooseWhatToDiscard(self, instance, player_id):
+  def chooseWhatToDiscard(self, instance, player_id, player_hand):
     player = instance.getPlayer(player_id)
     discarded = []
-    while len(player.hand) > 7:
-      discarded.append(player.hand.pop(random.randint(0, len(player.hand) - 1)))
+    while len(player_hand) > 7:
+      discarded.append(player_hand.pop(random.randint(0, len(player_hand) - 1)))
     return discarded
 
   def recievePayment(self, instance, player_id, properties):

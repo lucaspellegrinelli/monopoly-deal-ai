@@ -31,7 +31,7 @@ class Player:
     payed = 0
 
     while payed < how_much and len(self.money) > 0 and len(self.sets) > 0:
-      this_it_pay = self.ai.choosePayment(instance, self.id, how_much)
+      this_it_pay = self.ai.choosePayment(instance, self.id, self.sets, self.money, how_much)
 
       if len(this_it_pay) == 0:
         raise RuntimeError("The method 'choosePayment' didn't choose enough cards \
@@ -57,7 +57,7 @@ class Player:
   def chooseWhatToDiscard(self, instance):
     discarded = []
     while len(self.hand) > 7:
-      discarded += self.ai.chooseWhatToDiscard(instance, self.id)
+      discarded += self.ai.chooseWhatToDiscard(instance, self.id, self.hand)
 
       if len(discarded) == 0:
         raise RuntimeError("You didn't discard enough in the 'chooseWhatToDiscard' \
