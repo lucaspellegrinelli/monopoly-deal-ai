@@ -146,7 +146,9 @@ class AI:
   #        processed)
   #
   # - OUTPUT
-  # --- N/A
+  # --- actions: list of Action
+  # ------ All the actions like "put this property in the set" using actions
+  #        like PlayPropertyAction
   #
   # ------------------------------- Observations -------------------------------
   #
@@ -157,7 +159,7 @@ class AI:
   # - If there aren't any actions returned, an exception will be raised.
   #
   # ---------------------------------------------------------------------------
-  def recievePayment(self, instance, player_id, properties):
+  def recievePropertiesFromPayment(self, instance, player_id, properties):
     raise NotImplementedError("Please implement the method 'recievePayment' in the subclass")
 
   # ------------------------------- Method Role -------------------------------

@@ -82,7 +82,7 @@ class Player:
         self.sets.append(item)
 
     if single_properties:
-      actions = self.ai.recievePayment(instance, self.id, single_properties)
+      actions = self.ai.recievePropertiesFromPayment(instance, self.id, single_properties)
 
       if len(actions) == 0:
         raise RuntimeError("There are properties unaddressed in 'recievePayment' \
@@ -101,7 +101,7 @@ class Player:
       unaddressed_cards = [p for p in single_properties if p.id not in addressed_cards_id]
 
       if len(unaddressed_cards) > 0:
-        self.recievePayment(instance, unaddressed_cards)
+        self.recievePropertiesFromPayment(instance, unaddressed_cards)
 
   def willNegate(self, instance, action):
     has_negate = len([c for c in self.hand if c.id == JUST_SAY_NO]) > 0

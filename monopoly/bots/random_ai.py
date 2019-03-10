@@ -39,7 +39,7 @@ class RandomAI(AI):
       discarded.append(player_hand.pop(random.randint(0, len(player_hand) - 1)))
     return discarded
 
-  def recievePayment(self, instance, player_id, properties):
+  def recievePropertiesFromPayment(self, instance, player_id, properties):
     player = instance.getPlayer(player_id)
     actions = []
 
