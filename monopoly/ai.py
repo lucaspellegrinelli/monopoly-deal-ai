@@ -93,6 +93,8 @@ class AI:
   # ------ The instance of the game
   # --- player_id: integer
   # ------ The id of the player
+  # --- player_hand: list of Card
+  # ------ All the cards in the player hand
   #
   # - OUTPUT
   # --- cards: list of Card
