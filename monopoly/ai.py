@@ -13,6 +13,11 @@ class AI:
   # - Game.applyAction(Action): void
   # --- Apply the action's effect into that instance of the game
   #
+  # - Game.getInstance(Player): Game
+  # --- Get the instance of the game from the perspective of one player (the
+  #     only player where the cards in hand are accurate with the real game
+  #     is the specified player)
+  #
   # - Game.getTurnPossibleMoves(Player): void
   # --- Returns a list of all possible actions the specified player can do
   #
@@ -45,7 +50,8 @@ class AI:
   #
   # ----------------------- You'll need these functions -----------------------
   #
-  # - N/A
+  # - Read "property_set.py" for all methods about the PropertySet class
+  # - Read "card.py" for all methods about the PropertyCard class
   #
   # ----------------------------- Inputs/Outputs -----------------------------
   #
@@ -84,7 +90,7 @@ class AI:
   #
   # ----------------------- You'll need these functions -----------------------
   #
-  # - N/A
+  # - Read "card.py" for all methods about all the different Card subclasses
   #
   # ----------------------------- Inputs/Outputs -----------------------------
   #
