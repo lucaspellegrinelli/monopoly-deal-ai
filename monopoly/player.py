@@ -94,9 +94,23 @@ class Player:
       addressed_cards = []
       addressed_cards_id = []
       for action in actions:
-        addressed_cards.append(action.property)
-        addressed_cards_id.append(action.property.id)
-        self.givePropertyToSet(action.property_set, action.property)
+        if isinstance(action, PlayPropertyAction):
+          property_recieved = False
+          for card in single_properties:
+            if card.id == action.property.id:
+              property_recieved = True
+              break
+
+          if property_recieved:
+            addressed_cards.append(action.property)
+            addressed_cards_id.append(action.property.id)
+            self.givePropertyToSet(action.property_set, action.property)
+          else:
+            raise RuntimeError("In 'recievePayment' you tried to play a property \
+            you didn't recieve.")
+        else:
+          raise RuntimeError("In 'recievePayment' you returned an action that is not \
+          of the type PlayPropertyAction.")
 
       unaddressed_cards = [p for p in single_properties if p.id not in addressed_cards_id]
 
@@ -113,6 +127,17 @@ class Player:
       return negate
     else:
       return False
+
+  def arrangeWildcards(self, instance):
+    actions = []
+    r = self.ai.arrangeWildcards(instance, self.id, self.sets)
+    for action in r:
+      if isinstance(action, MovePropertyAction):
+        actions.append(action)
+      else:
+        raise RuntimeError("In 'arrangeWildcards' you returned an action that is not \
+        of the type PlayPropertyAction.")
+    return actions
 
   # -------------------------------- UTIL --------------------------------------
   def turnPassing(self):

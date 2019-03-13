@@ -1,9 +1,6 @@
 # - Abstract class of an Artificial Intellience
 class AI:
 
-  # - TODO
-  # --- Window for the AI to rearrange its wildcard properties
-
   # ------------------------------- Method Role -------------------------------
   #
   # Choose what action the player will take next
@@ -152,7 +149,7 @@ class AI:
   #        processed)
   #
   # - OUTPUT
-  # --- actions: list of Action
+  # --- actions: list of PlayPropertyAction
   # ------ All the actions like "put this property in the set" using actions
   #        like PlayPropertyAction
   #
@@ -163,6 +160,12 @@ class AI:
   # WITH THE SAME INSTANCE AS BEFORE.
   #
   # - If there aren't any actions returned, an exception will be raised.
+  #
+  # - If any of the actions returned are not PlayPropertyAction, an exception will
+  # be raised
+  #
+  # - If you try to play a property you didn't recieve, an exception will be
+  # raised
   #
   # ---------------------------------------------------------------------------
   def recievePropertiesFromPayment(self, instance, player_id, properties):
@@ -209,8 +212,38 @@ class AI:
   #
   # ------------------------------- Observations -------------------------------
   #
-  # If the return value is not a boolean, an exception will be raised
+  # - If the return value is not a boolean, an exception will be raised
   #
   # ---------------------------------------------------------------------------
   def willNegate(self, instance, player_id, action):
     raise NotImplementedError("Please implement the method 'willNegate' in the subclass")
+
+  # ------------------------------- Method Role -------------------------------
+  #
+  #
+  # ----------------------- You'll need these functions -----------------------
+  #
+  #
+  # ----------------------------- Inputs/Outputs -----------------------------
+  #
+  # - INPUTS
+  # --- instance: Game
+  # ------ The instance of the game
+  # --- player_id: integer
+  # ------ The id of the player
+  # --- player_sets: list of PropertySet
+  # ------ All the properties the player controls
+  #
+  # - OUTPUT
+  # --- actions: list of MovePropertyAction
+  # ------ The changes you'll be making to the arrangement of the wild cards
+  #        in your field
+  #
+  # ------------------------------- Observations -------------------------------
+  #
+  # - If any of the actions returned are not MovePropertyAction, an exception will
+  # be raised
+  #
+  # ---------------------------------------------------------------------------
+  def arrangeWildcards(self, instance, player_id, player_sets):
+    raise NotImplementedError("Please implement the method 'arrangeWildcards' in the subclass")

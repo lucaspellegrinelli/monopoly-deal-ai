@@ -51,6 +51,9 @@ class Game:
 
       game_state = self.getGameState()
 
+      card_rearrangement = player.arrangeWildcards(self.getInstance(player))
+      self.applyAction(card_rearrangement, player)
+
       player.turnPassing()
       discarded_cards = player.chooseWhatToDiscard(self.getInstance(player))
 

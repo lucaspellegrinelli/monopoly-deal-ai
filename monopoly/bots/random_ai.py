@@ -67,3 +67,20 @@ class RandomAI(AI):
       return False
     else:
       return False
+
+  def arrangeWildcards(self, instance, player_id, player_sets):
+    actions = []
+    wild_cards = []
+    for set in player_sets:
+      if not set.isDefined():
+        wild = (set.properties[0], set)
+        wild_cards.append(wild)
+
+    for wild in wild_cards:
+      added = False
+      for set in player_sets:
+        if set.canAddProperty(wild[0]):
+          actions.append(MovePropertyAction(player_id, wild[0], wild[1], set))
+          break
+
+    return actions

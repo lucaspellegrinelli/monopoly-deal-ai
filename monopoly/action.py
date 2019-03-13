@@ -18,6 +18,16 @@ class PlayPropertyAction(Action):
   def __repr__(self):
     return "Played " + self.property.name + " into a pSet with " + str(len(self.property_set.properties)) + " properties"
 
+class MovePropertyAction(Action):
+  def __init__(self, who_used_id, property, property_set_bef, property_set_aft):
+    Action.__init__(self, who_used_id)
+    self.property = property
+    self.property_set_bef = property_set_bef
+    self.property_set_aft = property_set_aft
+
+  def __repr__(self):
+    return "Removed " + self.property.name + " into a pSet with " + str(len(self.property_set.properties)) + " properties"
+
 class AddMoneyAction(Action):
   def __init__(self, who_used_id, money):
     Action.__init__(self, who_used_id)
