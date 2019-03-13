@@ -220,9 +220,12 @@ class AI:
 
   # ------------------------------- Method Role -------------------------------
   #
+  # Arrange your cards so they fit better the player interest reagarding
+  # their placements on the sets
   #
   # ----------------------- You'll need these functions -----------------------
   #
+  # - N/A
   #
   # ----------------------------- Inputs/Outputs -----------------------------
   #
@@ -241,9 +244,11 @@ class AI:
   #
   # ------------------------------- Observations -------------------------------
   #
+  # - This will be called right before the turn ends
+  #
   # - If any of the actions returned are not MovePropertyAction, an exception will
   # be raised
   #
   # ---------------------------------------------------------------------------
-  def arrangeWildcards(self, instance, player_id, player_sets):
-    raise NotImplementedError("Please implement the method 'arrangeWildcards' in the subclass")
+  def rearrangeCards(self, instance, player_id, player_sets):
+    raise NotImplementedError("Please implement the method 'rearrangeCards' in the subclass")

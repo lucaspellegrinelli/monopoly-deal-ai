@@ -128,9 +128,9 @@ class Player:
     else:
       return False
 
-  def arrangeWildcards(self, instance):
+  def rearrangeCards(self, instance):
     actions = []
-    r = self.ai.arrangeWildcards(instance, self.id, self.sets)
+    r = self.ai.rearrangeCards(instance, self.id, self.sets)
     for action in r:
       if isinstance(action, MovePropertyAction):
         actions.append(action)

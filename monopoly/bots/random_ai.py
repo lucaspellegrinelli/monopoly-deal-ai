@@ -68,7 +68,7 @@ class RandomAI(AI):
     else:
       return False
 
-  def arrangeWildcards(self, instance, player_id, player_sets):
+  def rearrangeCards(self, instance, player_id, player_sets):
     actions = []
     wild_cards = []
     for set in player_sets:

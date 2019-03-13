@@ -51,7 +51,7 @@ class Game:
 
       game_state = self.getGameState()
 
-      card_rearrangement = player.arrangeWildcards(self.getInstance(player))
+      card_rearrangement = player.rearrangeCards(self.getInstance(player))
       self.applyAction(card_rearrangement, player)
 
       player.turnPassing()
@@ -182,7 +182,7 @@ class Game:
           # Doubles the next rent card played this turn
           moves.append(ApplyDoubleRent(player.copy(), card))
 
-    return moves
+    return list(set(moves))
 
   def applyAction(self, action, player):
     other_players_id = [p.id for p in self.players if p.id != player.id]
