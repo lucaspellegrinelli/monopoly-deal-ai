@@ -19,25 +19,31 @@ class Game:
     self.deck = Deck(ALL_CARDS)
     self.players = [Player(i, self.deck.getCards(self.startingHandCount), ai) for i in range(n_players)]
 
+    self.log = True
+
   def run(self):
     player_index = random.randint(0, len(self.players) - 1)
     game_state = self.getGameState()
 
     while not game_state.ended:
-      print("\n--------- Turn Starting ---------\n")
       player = self.players[player_index]
-      print("Player #" + str(player_index) + " turn\n")
-      print("Deck size: " + str(len(self.deck.deck)))
-      print("Discard size: " + str(len(self.deck.used_pile)) + "\n")
-      self.printCardQtdInfo()
+      
+      if self.log:
+        print("\n--------- Turn Starting ---------\n")
+        print("Player #" + str(player_index) + " turn\n")
+        print("Deck size: " + str(len(self.deck.deck)))
+        print("Discard size: " + str(len(self.deck.used_pile)) + "\n")
+        self.printCardQtdInfo()
 
       player.addToHand(self.deck.getCards(self.drawPerTurn))
 
-      print(player)
+      if self.log:
+        print(player)
 
       for action in range(self.actionsPerTurn):
         chosen_action = player.chooseMove(self.getInstance(player), self.actionsPerTurn - action)
-        print("[Action] " + str(chosen_action))
+        if self.log:
+          print("[Action] " + str(chosen_action))
 
         if isinstance(chosen_action, DoNothingAction):
           self.noOptionsCount += 1
@@ -57,13 +63,16 @@ class Game:
       player.turnPassing()
       discarded_cards = player.chooseWhatToDiscard(self.getInstance(player))
 
-      print(player)
+      if self.log:
+        print(player)
 
       random.shuffle(discarded_cards)
       self.deck.deck += discarded_cards
       player_index = (player_index + 1) % len(self.players)
 
-    print(game_state.player)
+    if self.log:
+      print(game_state.player)
+
     return game_state
 
   def getInstance(self, player):
