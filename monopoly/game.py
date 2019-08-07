@@ -8,21 +8,53 @@ from player import Player
 from property_set import PropertySet
 from deck import Deck
 
+# Class responsible for managing the game flow
 class Game:
   def __init__(self, n_players, ai):
-    self.actionsPerTurn = 3
-    self.startingHandCount = 5
-    self.drawPerTurn = 2
-    self.completedSetsToWin = 3
-    self.ai = ai
-    self.noOptionsCount = 0
-    self.deck = Deck(ALL_CARDS)
-    self.players = [Player(i, self.deck.getCards(self.startingHandCount), ai) for i in range(n_players)]
 
+    # =========== GAME CONFIGURATION ===========
+
+    # How many actions can a player do each turn
+    self.actions_per_turn = 3
+
+    # How many cards the player will have at the start of the game
+    self.starting_hand_count = 5
+
+    # How many cards will be drawn each turn for each player
+    self.draw_per_turn = 2
+
+    # How many sets need to be completed to win the game
+    self.completed_sets_to_win = 3
+
+
+    # =========== GAME VARIABLES ===========
+
+    # The AI object that will be used in each of the players
+    self.ai = ai
+
+    # The deck that will be utilized throughout the game
+    self.deck = Deck(ALL_CARDS)
+
+    # The players that will play the game and their respective hands
+    self.players = [Player(i, self.deck.getCards(self.starting_hand_count), ai) for i in range(n_players)]
+
+    # How many actions ended with no option left
+    self.no_options_count = 0
+
+    # How many consecutive no option actions are necessary for the game to end
+    self.max_no_option_count = len(self.players) * 3
+
+    # Should the code print terminal logs?
     self.log = True
 
+  # Function responsible for the loop of the game. Should control the
+  # flow of the game, asking the correct players for response, managing
+  # whose turn it is, when the game ended and etc.
+  # This function returns the game state the game ended at
   def run(self):
+    # Random starting player
     player_index = random.randint(0, len(self.players) - 1)
+
     game_state = self.getGameState()
 
     while not game_state.ended:
@@ -35,20 +67,20 @@ class Game:
         print("Discard size: " + str(len(self.deck.used_pile)) + "\n")
         self.printCardQtdInfo()
 
-      player.addToHand(self.deck.getCards(self.drawPerTurn))
+      player.addToHand(self.deck.getCards(self.draw_per_turn))
 
       if self.log:
         print(player)
 
-      for action in range(self.actionsPerTurn):
-        chosen_action = player.chooseMove(self.getInstance(player), self.actionsPerTurn - action)
+      for action in range(self.actions_per_turn):
+        chosen_action = player.chooseMove(self.getInstance(player), self.actions_per_turn - action)
         if self.log:
           print("[Action] " + str(chosen_action))
 
         if isinstance(chosen_action, DoNothingAction):
-          self.noOptionsCount += 1
+          self.no_options_count += 1
         else:
-          self.noOptionsCount = 0
+          self.no_options_count = 0
 
         self.applyAction(chosen_action, player)
 
@@ -68,6 +100,8 @@ class Game:
 
       random.shuffle(discarded_cards)
       self.deck.deck += discarded_cards
+
+      # Goes to the next player
       player_index = (player_index + 1) % len(self.players)
 
     if self.log:
@@ -75,11 +109,19 @@ class Game:
 
     return game_state
 
+  # Function that generates a SHARABLE instance of the current
+  # state of the game. This means that the instance has a target
+  # player, and the only things this player has for sure are
+  # the informations that are public to him like his hand, all
+  # players field, all players money pile and the discard pile.
+  # He doesn't has access to the hands of the opponents, what
+  # is instead provided is a POSSIBLE hand to each one of them
+  # based on whats not in the publicly available knowledge.
   def getInstance(self, player):
     instance = Game(len(self.players), self.ai)
     instance.deck = copy.deepcopy(self.deck)
     instance.players = copy.deepcopy(self.players)
-    instance.noOptionsCount = self.noOptionsCount
+    instance.no_options_count = self.no_options_count
 
     # The played doesn't have info about cards in opponent hand
     # So I need to blend it with the deck
@@ -99,8 +141,10 @@ class Game:
 
     return instance
 
+  # Gets if the game has ended, if so, by who.
+  #   - EndGameResult(ended?, draw?, player_who_won)
   def getGameState(self):
-    if self.noOptionsCount >= len(self.players) * 3:
+    if self.no_options_count >= self.max_no_option_count:
       return EndGameResult(True, True)
 
     for player in self.players:
@@ -109,6 +153,8 @@ class Game:
 
     return EndGameResult(False)
 
+  # Returns all possible moves that a target player can make with the
+  # current game state. What's returned is an array of 'Action'.
   def getTurnPossibleMoves(self, player):
     moves = [DoNothingAction(player.id)]
 
@@ -193,6 +239,10 @@ class Game:
 
     return list(set(moves))
 
+  # Given a given 'Action' object and a designated player that is trying
+  # to make this action, this function applies this action to the current
+  # game state. Nothing is returned, all changes are applied directly to
+  # this 'Game' object.
   def applyAction(self, action, player):
     other_players_id = [p.id for p in self.players if p.id != player.id]
     other_players = [p for p in self.players if p.id != player.id]
@@ -278,11 +328,14 @@ class Game:
       self.deck.used_pile.append(action.card)
       player.removeFromHand(action.card)
 
+  # Returns the 'Player' object of a given player id
   def getPlayer(self, player_id):
     for p in self.players:
       if p.id == player_id:
         return p
 
+  # Debugging method to ensure that no cards are being created nor
+  # destroyed in the process of the game.
   def printCardQtdInfo(self):
     t = self.deck.deck + self.deck.used_pile
     for p in self.players:
@@ -322,6 +375,8 @@ class Game:
 
     print("money", money_cards, "property", property_cards, "rent", rent_cards, "action", action_cards)
 
+# Class responsible for being a callback that carries the information about
+# the game ending or not
 class EndGameResult:
   def __init__(self, ended, draw = None, player = None):
     self.ended = ended

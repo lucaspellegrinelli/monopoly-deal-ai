@@ -1,7 +1,5 @@
-import copy
-import random
-
-# Property Card Flags
+# Property Card Flags.
+# These defines which flag will be assigned to each color of a property
 GREEN_PROPERTY = 0
 DARK_BLUE_PROPERTY = 1
 LIGHT_BLUE_PROPERTY = 2
@@ -14,6 +12,7 @@ PINK_PROPERTY = 8
 BLACK_PROPERTY = 9
 RAINBOW_PROPERTY = 10
 
+# Class responsible for managing what a general card should have
 class Card:
   def __init__(self, id, name, value):
     self.id = id
@@ -23,15 +22,22 @@ class Card:
   def __repr__(self):
     return self.name
 
+# Class responsible for managing what (besides what's already defined in the Card class)
+# is necessary for a Money Card
 class MoneyCard(Card):
   def __init__(self, id, name, value):
     Card.__init__(self, id, name, value)
 
+# Class responsible for managing what (besides what's already defined in the Card class)
+# is necessary for a Action Card (examples of Action Cards are like 'Deal Breaker' or
+# 'Debt Collector')
 class ActionCard(Card):
   def __init__(self, id, name, value, action):
     Card.__init__(self, id, name, value)
     self.action = action
 
+# Class responsible for managing what (besides what's already defined in the Card class)
+# is necessary for a Property Card (that could have multiple colors)
 class PropertyCard(Card):
   def __init__(self, id, name, value, colors):
     Card.__init__(self, id, name, value)
@@ -40,6 +46,8 @@ class PropertyCard(Card):
   def isRainbow(self):
     return self.colors[0] == 10
 
+# Class responsible for managing what (besides what's already defined in the Card class)
+# is necessary for a Rent Card (including multiple colors rent and wild rent)
 class RentCard(Card):
   def __init__(self, id, name, value, colors, wild):
     Card.__init__(self, id, name, value)

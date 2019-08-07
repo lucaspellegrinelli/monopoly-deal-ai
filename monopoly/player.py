@@ -17,7 +17,11 @@ class Player:
 
     self.doubleRent = False
 
-  # --------------------------------- AI STUFF --------------------------------
+
+  # ======================== AI STUFF ========================
+
+  # Calls the AI with all the game instance so that the player will choose
+  # which action it will take in its turn
   def chooseMove(self, instance, moves_left):
     move = self.ai.chooseMove(instance, self.id, moves_left)
 
@@ -26,6 +30,8 @@ class Player:
 
     return move
 
+  # Calls the AI so that the player will choose which of its cards will be
+  # used as payment to a rent or action card used against him
   def choosePayment(self, instance, how_much):
     payment = []
     payed = 0
@@ -54,6 +60,8 @@ class Player:
 
     return payment
 
+  # Calls the AI so that the player will choose which of its cards will be
+  # discarded as a result of having more that the allowed cards in its hand
   def chooseWhatToDiscard(self, instance):
     discarded = []
     while len(self.hand) > 7:
@@ -71,6 +79,8 @@ class Player:
 
     return discarded
 
+  # Calls the AI so it decides where to put all of the properties/money it has recieved
+  # as a result of using a card that asks for a payment
   def recievePayment(self, instance, payment):
     single_properties = []
     for item in payment:
@@ -117,6 +127,8 @@ class Player:
       if len(unaddressed_cards) > 0:
         self.recievePropertiesFromPayment(instance, unaddressed_cards)
 
+  # Calls the AI so that the player can decide if (given it has a "JUST SAY NO" card) it
+  # wants to negate or not a card used against him.
   def willNegate(self, instance, action):
     has_negate = len([c for c in self.hand if c.id == JUST_SAY_NO]) > 0
 
@@ -128,6 +140,7 @@ class Player:
     else:
       return False
 
+  # Calls the AI to decide how it wants to be arranged.
   def rearrangeCards(self, instance):
     actions = []
     r = self.ai.rearrangeCards(instance, self.id, self.sets)
@@ -135,11 +148,14 @@ class Player:
       if isinstance(action, MovePropertyAction):
         actions.append(action)
       else:
-        raise RuntimeError("In 'arrangeWildcards' you returned an action that is not \
+        raise RuntimeError("In 'rearrangeCards' you returned an action that is not \
         of the type PlayPropertyAction.")
     return actions
 
-  # -------------------------------- UTIL --------------------------------------
+
+
+  # ======================== UTIL ========================
+
   def turnPassing(self):
     self.doubleRent = False
     self.cleanClearSets()
@@ -155,7 +171,8 @@ class Player:
 
     return completed >= 3
 
-  # ----------------------------- CARD MANAGEMENT -----------------------------
+  # ======================== CARD MANAGEMENT ========================
+
   def givePropertyToSet(self, set, card):
     if set.numberOfProperties() > 0:
       for s in self.sets:
@@ -202,11 +219,11 @@ class Player:
         self.money.remove(c)
         break
 
-  # --------------------------- INSTANCE MANAGEMENT ---------------------------
+  # ======================== INSTANCE MANAGEMENT ========================
   def copy(self):
     return copy.deepcopy(self)
 
-  # ------------------------ BUILT IN METHODS OVERRIDE ------------------------
+  # ======================== BUILT IN METHODS OVERRIDE ========================
   def __str__(self):
     final = "\n- Hand :\t" + str(self.hand) + "\n"
     final += "- Money:\t" + str(self.money) + "\n"

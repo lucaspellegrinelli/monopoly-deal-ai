@@ -1,8 +1,12 @@
 from card import *
 
+# Array where all the cards of the deck will be stored
 ALL_CARDS = []
 
-# ----------- MONEY ------------- #
+# ============================= MONEY ============================= #
+
+# Creates the correct 'MoneyCard' object based on the 'n' passed to
+# this function and gives each one a flag (first argument of the constructor)
 def getMoney(n):
   if n == 1:
     return MoneyCard(5, "1M", 1)
@@ -17,6 +21,7 @@ def getMoney(n):
   elif n == 10:
     return MoneyCard(0, "10M", 10)
 
+# Adds the correct amount of each money bill in the game
 for i in range(1):
   ALL_CARDS.append(getMoney(10))
 
@@ -35,7 +40,12 @@ for i in range(5):
 for i in range(6):
   ALL_CARDS.append(getMoney(1))
 
-# ----------- PROPERTY ------------- #
+
+
+# ============================= PROPERTY ============================= #
+
+# Adds the correct amount of each property card in the game and gives each one
+# a flag number (first argument of the constructor)
 for i in range(2):
   ALL_CARDS.append(PropertyCard(6, "Brown Property", 1, [BROWN_PROPERTY]))
 
@@ -90,7 +100,12 @@ for i in range(2):
 for i in range(2):
   ALL_CARDS.append(PropertyCard(23, "Rainbow Property", 0, [RAINBOW_PROPERTY]))
 
-# ----------- RENT ------------- #
+
+
+# ============================= RENT ============================= #
+
+# Adds the correct amount of each rent card in the game and gives each one
+# a flag number (first argument of the constructor)
 for i in range(2):
   ALL_CARDS.append(RentCard(24, "Dark Blue/Green Rent", 1, [GREEN_PROPERTY, DARK_BLUE_PROPERTY], False))
 
@@ -109,7 +124,12 @@ for i in range(2):
 for i in range(3):
   ALL_CARDS.append(RentCard(29, "Wild Rent", 1, [], True))
 
-# ----------- ACTION ------------- #
+
+
+# ============================= ACTIONS ============================= #
+
+# Defines flags for each of the action cards. This is useful in other parts
+# of the code as well.
 DEAL_BREAKER = 30
 DEBT_COLLECTOR = 31
 DOUBLE_RENT = 32
@@ -121,6 +141,8 @@ JUST_SAY_NO = 37
 PASS_GO = 38
 SLY_DEAL = 39
 
+# Adds the correct amount of each action card in the game and gives each one
+# a flag number (first argument of the constructor)
 for i in range(2):
   ALL_CARDS.append(ActionCard(DEAL_BREAKER, "Deal Braker", 5, "Steal a completed set"))
 

@@ -4,13 +4,16 @@ from card import *
 
 class PropertySet:
   def __init__(self, colors):
-    self.id = random.randint(-9999999, 9999999) # Should have better option
+    self.id = random.randint(-9999999, 9999999) # Probably there's a better option
     self.properties = []
     self.colors = colors
     self.hasHouse = False
     self.hasHotel = False
 
-  # --------------------------- PROPERTY MANAGEMENT ---------------------------
+
+
+  # ======================== PROPERTY MANAGEMENT ========================
+
   def addProperty(self, property):
     if self.canAddProperty(property):
       self.properties.append(property)
@@ -35,10 +38,15 @@ class PropertySet:
         return True
     return False
 
-  # ----------------------------------- UTIL -----------------------------------
+
+
+  # ======================== UTIL ========================
+
   def numberOfProperties(self):
     return len(self.properties)
 
+  # Returns the value of the current property set that will be used
+  # as the rent value
   def rentValue(self):
     rent = 0
     if self.isDefined():
@@ -65,6 +73,7 @@ class PropertySet:
 
     return rent + (3 if self.hasHouse else 0) + (4 if self.hasHotel else 0)
 
+  # Returns the number of properties that this property set needs for it to be completed
   def numberToComplete(self):
     if self.isDefined():
       if self.colors[0] == BROWN_PROPERTY or self.colors[0] == DARK_BLUE_PROPERTY or\
@@ -77,6 +86,8 @@ class PropertySet:
       elif self.colors[0] == BLACK_PROPERTY:
         return 4
     else:
+      # If there's only a multi color property, we will assume the maximum number it needs
+      # based on the colors available on this multi color property
       p = [PropertySet(self.colors[i]) for i in range(len(self.colors))]
       return max([x.numberToComplete() for x in p])
 
@@ -92,7 +103,9 @@ class PropertySet:
     else:
       print("Tried to add Hotel in non House set")
 
-  # ---------------------------------- TESTS ----------------------------------
+
+
+  # ======================== TESTS ========================
   def isCompleted(self):
     return self.isDefined() and self.numberOfProperties() >= self.numberToComplete()
 
@@ -102,7 +115,9 @@ class PropertySet:
   def isUtility(self):
     return self.colors[0] == BLACK_PROPERTY or self.colors[0] == LIGHT_GREEN_PROPERTY
 
-  # ------------------------ BUILT IN METHODS OVERRIDE ------------------------
+
+
+  # ======================== BUILT IN METHODS OVERRIDE ========================
   def __repr__(self):
     return str(self.properties)
 
