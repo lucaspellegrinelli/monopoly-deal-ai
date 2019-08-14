@@ -2,14 +2,18 @@ import random
 
 from card import *
 
+property_set_last_id = 0
+
 class PropertySet:
   def __init__(self, colors):
-    self.id = random.randint(-9999999, 9999999) # Probably there's a better option
+    global property_set_last_id
+    self.id = property_set_last_id
+    property_set_last_id += 1
+
     self.properties = []
     self.colors = colors
     self.hasHouse = False
     self.hasHotel = False
-
 
 
   # ======================== PROPERTY MANAGEMENT ========================

@@ -128,19 +128,6 @@ for i in range(3):
 
 # ============================= ACTIONS ============================= #
 
-# Defines flags for each of the action cards. This is useful in other parts
-# of the code as well.
-DEAL_BREAKER = 30
-DEBT_COLLECTOR = 31
-DOUBLE_RENT = 32
-FORCED_DEAL = 33
-HOTEL = 34
-HOUSE = 35
-ITS_MY_BIRTHDAY = 36
-JUST_SAY_NO = 37
-PASS_GO = 38
-SLY_DEAL = 39
-
 # Adds the correct amount of each action card in the game and gives each one
 # a flag number (first argument of the constructor)
 for i in range(2):

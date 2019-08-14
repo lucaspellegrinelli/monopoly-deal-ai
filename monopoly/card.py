@@ -1,16 +1,4 @@
-# Property Card Flags.
-# These defines which flag will be assigned to each color of a property
-GREEN_PROPERTY = 0
-DARK_BLUE_PROPERTY = 1
-LIGHT_BLUE_PROPERTY = 2
-RED_PROPERTY = 3
-LIGHT_GREEN_PROPERTY = 4
-YELLOW_PROPERTY = 5
-ORANGE_PROPERTY = 6
-BROWN_PROPERTY = 7
-PINK_PROPERTY = 8
-BLACK_PROPERTY = 9
-RAINBOW_PROPERTY = 10
+from flags import *
 
 # Class responsible for managing what a general card should have
 class Card:
@@ -53,3 +41,9 @@ class RentCard(Card):
     Card.__init__(self, id, name, value)
     self.colors = colors
     self.wild = wild
+
+# Class corresponding to a card that the target player doesn't have information about
+# like in the case of other players hand or the deck
+class UnknownCard(Card):
+  def __init__(self):
+    Card.__init__(self, -1, "Unknown", -1)

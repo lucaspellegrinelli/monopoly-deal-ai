@@ -115,29 +115,40 @@ class Game:
   # the informations that are public to him like his hand, all
   # players field, all players money pile and the discard pile.
   # He doesn't has access to the hands of the opponents, what
-  # is instead provided is a POSSIBLE hand to each one of them
-  # based on whats not in the publicly available knowledge.
+  # is instead provided is "Unknown Card" objects filling all
+  # other players hands and the deck (keeping the amount of
+  # cards that those have unchanged).
   def getInstance(self, player):
     instance = Game(len(self.players), self.ai)
     instance.deck = copy.deepcopy(self.deck)
     instance.players = copy.deepcopy(self.players)
     instance.no_options_count = self.no_options_count
 
-    # The played doesn't have info about cards in opponent hand
-    # So I need to blend it with the deck
-    cards_in_hand = []
+    # The player doesn't have info about cards in opponent hand
+    # So I need to replace them with "Unknown Cards"
     for p in instance.players:
       if p.id != player.id:
-        cards_in_hand.append([p.id, len(p.hand)])
-        instance.deck.deck += p.hand
-        p.hand = []
+        p.hand = [UnknownCard()] * len(p.hand)
 
-    instance.deck.shuffle()
-    for p in instance.players:
-      for c_in_hand in cards_in_hand:
-        if p.id == c_in_hand[0]:
-          p.hand += instance.deck.getCards(c_in_hand[1])
-          break
+    instance.deck.deck = [UnknownCard()] * len(instance.deck.deck)
+
+    # / ====== THE APPROACH BELOW IS DEPRECATED ====== /
+
+    # The player doesn't have info about cards in opponent hand
+    # So I need to blend it with the deck
+    # cards_in_hand = []
+    # for p in instance.players:
+    #   if p.id != player.id:
+    #     cards_in_hand.append([p.id, len(p.hand)])
+    #     instance.deck.deck += p.hand
+    #     p.hand = []
+
+    # instance.deck.shuffle()
+    # for p in instance.players:
+    #   for c_in_hand in cards_in_hand:
+    #     if p.id == c_in_hand[0]:
+    #       p.hand += instance.deck.getCards(c_in_hand[1])
+    #       break
 
     return instance
 
