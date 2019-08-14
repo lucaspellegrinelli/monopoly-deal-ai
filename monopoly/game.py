@@ -159,7 +159,7 @@ class Game:
       return EndGameResult(True, True)
 
     for player in self.players:
-      if player.hasWon():
+      if player.hasWon(self.completed_sets_to_win):
         return EndGameResult(True, False, player)
 
     return EndGameResult(False)
@@ -188,9 +188,9 @@ class Game:
         for property_set in player.sets:
           if property_set.isDefined() and property_set.rentValue() > 0:
             if card.wild:
-              moves += [AskMoneyAction(player.id, card, property_set.rentValue() * (2 if player.doubleRent else 1), [o_player_id]) for o_player_id in other_players_id]
+              moves += [AskMoneyAction(player.id, card, property_set.rentValue() * (2 if player.double_rent else 1), [o_player_id]) for o_player_id in other_players_id]
             elif property_set.colors[0] in card.colors:
-              moves.append(AskMoneyAction(player.id, card, property_set.rentValue() * (2 if player.doubleRent else 1), other_players_id))
+              moves.append(AskMoneyAction(player.id, card, property_set.rentValue() * (2 if player.double_rent else 1), other_players_id))
 
       elif isinstance(card, ActionCard):
         moves.append(AddMoneyAction(player.id, card))
@@ -335,7 +335,7 @@ class Game:
       player.removeFromHand(action.card)
 
     elif isinstance(action, ApplyDoubleRent):
-      player.doubleRent = True
+      player.double_rent = True
       self.deck.used_pile.append(action.card)
       player.removeFromHand(action.card)
 

@@ -15,7 +15,8 @@ class Player:
 
     self.ai = ai
 
-    self.doubleRent = False
+    self.double_rent = False
+    self.max_cards_in_hand = 7
 
 
   # ======================== AI STUFF ========================
@@ -64,7 +65,7 @@ class Player:
   # discarded as a result of having more that the allowed cards in its hand
   def chooseWhatToDiscard(self, instance):
     discarded = []
-    while len(self.hand) > 7:
+    while len(self.hand) > self.max_cards_in_hand:
       discarded += self.ai.chooseWhatToDiscard(instance, self.id, self.hand)
 
       if len(discarded) == 0:
@@ -157,19 +158,19 @@ class Player:
   # ======================== UTIL ========================
 
   def turnPassing(self):
-    self.doubleRent = False
+    self.double_rent = False
     self.cleanClearSets()
 
   def cleanClearSets(self):
     self.sets = [x for x in self.sets if x.numberOfProperties() > 0]
 
-  def hasWon(self):
+  def hasWon(self, how_many_to_win):
     completed = 0
     for set in self.sets:
       if set.isCompleted():
         completed += 1
 
-    return completed >= 3
+    return completed >= how_many_to_win
 
   # ======================== CARD MANAGEMENT ========================
 
