@@ -10,7 +10,7 @@ from deck import Deck
 
 # Class responsible for managing the game flow
 class Game:
-  def __init__(self, n_players, ai):
+  def __init__(self, players_ai):
 
     # =========== GAME CONFIGURATION ===========
 
@@ -29,14 +29,17 @@ class Game:
 
     # =========== GAME VARIABLES ===========
 
+    # Counts which turn of the game we're in
+    self.current_turn = 0
+
     # The AI object that will be used in each of the players
-    self.ai = ai
+    self.players_ai = players_ai
 
     # The deck that will be utilized throughout the game
     self.deck = Deck(ALL_CARDS)
 
     # The players that will play the game and their respective hands
-    self.players = [Player(i, self.deck.getCards(self.starting_hand_count), ai) for i in range(n_players)]
+    self.players = [Player(i, p["name"], self.deck.getCards(self.starting_hand_count), p["ai"]) for i, p in enumerate(players_ai)]
 
     # How many actions ended with no option left
     self.no_options_count = 0
@@ -58,11 +61,11 @@ class Game:
     game_state = self.getGameState()
 
     while not game_state.ended:
+      self.current_turn += 1
       player = self.players[player_index]
       
       if self.log:
-        print("\n--------- Turn Starting ---------\n")
-        print("Player #" + str(player_index) + " turn\n")
+        print("\n--------- " + player.name + "'s' turn (#" + str(self.current_turn) + ") ---------\n")
         print("Deck size: " + str(len(self.deck.deck)))
         print("Discard size: " + str(len(self.deck.used_pile)) + "\n")
         self.printCardQtdInfo()
@@ -119,8 +122,8 @@ class Game:
   # other players hands and the deck (keeping the amount of
   # cards that those have unchanged).
   def getInstance(self, player):
-    instance = Game(len(self.players), self.ai)
-    instance.deck = copy.deepcopy(self.deck)
+    instance = Game(self.players_ai)
+    instance.deck = self.deck.copy()
     instance.players = copy.deepcopy(self.players)
     instance.no_options_count = self.no_options_count
 

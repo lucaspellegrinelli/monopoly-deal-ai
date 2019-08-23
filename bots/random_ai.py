@@ -1,10 +1,13 @@
+import sys
+sys.path.append('../')
+
 import random
 
-from ..cardsdb import *
-from ..action import *
-from ..property_set import *
+from monopoly.cardsdb import *
+from monopoly.action import *
+from monopoly.property_set import *
 
-from ..ai import AI
+from monopoly.ai import AI
 
 # Example of an implemented AI that does random stuff for living
 class RandomAI(AI):

@@ -7,8 +7,9 @@ from cardsdb import *
 from action import *
 
 class Player:
-  def __init__(self, id, hand, ai):
+  def __init__(self, id, name, hand, ai):
     self.id = id
+    self.name = name
     self.hand = hand
     self.sets = []
     self.money = []
@@ -196,6 +197,9 @@ class Player:
 
   def removeFromHand(self, card):
     # TODO: MAKE THIS WORK WITH "self.hand.remove(card)"
+    # where instead of looping through the hand and finding
+    # the correct card, I can just pass the 'card' parameter
+    # and based on its id, the correct card is removed
     for c in self.hand:
       if c.id == card.id:
         self.hand.remove(c)
@@ -215,6 +219,9 @@ class Player:
 
   def removeFromMoneyPile(self, card):
     # TODO: MAKE THIS WORK WITH "self.money.remove(card)"
+    # where instead of looping through the hand and finding
+    # the correct card, I can just pass the 'card' parameter
+    # and based on its id, the correct card is removed
     for c in self.money:
       if c.id == card.id:
         self.money.remove(c)

@@ -21,7 +21,7 @@ class Deck:
   # returned.
   def draw(self):
     if len(self.deck) == 0 and len(self.used_pile) > 0:
-      self.deck = copy.deepcopy(self.used_pile)
+      self.deck = self.used_pile
       random.shuffle(self.deck)
       self.used_pile = []
     elif len(self.deck) == 0 and len(self.used_pile) == 0:
@@ -47,3 +47,7 @@ class Deck:
   # Addes the specified card to the used pile
   def addToUsedPile(self, card):
     self.used_pile.append(card)
+
+  # Creates another object exactly the same as this one
+  def copy(self):
+    return copy.deepcopy(self)
