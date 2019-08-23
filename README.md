@@ -17,5 +17,6 @@ After that, just run
 python run.py
 ```
 
+
 ### Disclaimer
 Although this simulator seems to work, I have no guarantee that it actually works flawlessly (or works at all, I've never watched a full game the bots played to see if there's an illegal move). The only benchmark I used to "make sure" it works is counting the number of cards of each type in the game to make sure none of them were getting lost or duplicated and some eye ball check to see if the plays made sense rullings wise. Take it with a grain of salt.
