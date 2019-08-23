@@ -96,6 +96,8 @@ class Game:
       self.applyAction(card_rearrangement, player)
 
       player.turnPassing()
+
+      # Bug? Cards are never being removed from player hand
       discarded_cards = player.chooseWhatToDiscard(self.getInstance(player))
 
       if self.log:
