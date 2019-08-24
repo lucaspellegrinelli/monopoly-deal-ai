@@ -63,7 +63,7 @@ class Game:
     while not game_state.ended:
       self.current_turn += 1
       player = self.players[player_index]
-      
+
       if self.log:
         print("\n--------- " + player.name + "'s' turn (#" + str(self.current_turn) + ") ---------\n")
         print("Deck size: " + str(len(self.deck.deck)))
@@ -93,12 +93,14 @@ class Game:
       game_state = self.getGameState()
 
       card_rearrangement = player.rearrangeCards(self.getInstance(player))
-      self.applyAction(card_rearrangement, player)
+      for action in card_rearrangement:
+        self.applyAction(action, player)
 
       player.turnPassing()
 
-      # Bug? Cards are never being removed from player hand
       discarded_cards = player.chooseWhatToDiscard(self.getInstance(player))
+      for card in discarded_cards:
+        player.removeFromHand(card)
 
       if self.log:
         print(player)
