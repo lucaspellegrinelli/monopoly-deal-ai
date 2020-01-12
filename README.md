@@ -22,4 +22,4 @@ python run.py
 You can look up [```ai.py```](https://github.com/lucaspellegrinelli/monopoly-deal-ai/blob/master/monopoly/ai.py) for a better grasp on what you'll need to do to create a bot. In that file there are "very" detailed information on what each and every method your AI class needs to have. You can also take a look on the [```RandomAI```](https://github.com/lucaspellegrinelli/monopoly-deal-ai/blob/master/bots/random_ai.py) code for a working example.
 
 ### Disclaimer
-Although this simulator seems to work, I have no guarantee that it actually works flawlessly (or works at all, I've never watched a full game the bots played to see if there's an illegal move). The only benchmark I used to "make sure" it works is counting the number of cards of each type in the game to make sure none of them were getting lost or duplicated and some eye ball check to see if the plays made sense rullings wise. Take it with a grain of salt.
+Although this simulator seems to work, I have no guarantee that it actually works flawlessly since not enough formal testing we made. Take it with a grain of salt.
