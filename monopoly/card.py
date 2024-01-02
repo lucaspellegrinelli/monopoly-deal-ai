@@ -1,4 +1,4 @@
-from flags import *
+from .flags import *
 
 # Class responsible for managing what a general card should have
 class Card:

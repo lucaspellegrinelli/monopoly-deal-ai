@@ -1,10 +1,8 @@
-import random
 import copy
 
-from property_set import PropertySet
-
-from cardsdb import *
-from action import *
+from .action import *
+from .cardsdb import *
+from .property_set import PropertySet
 
 class Player:
   def __init__(self, id, name, hand, ai):

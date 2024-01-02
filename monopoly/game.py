@@ -1,12 +1,11 @@
 import copy
 import random
 
-from cardsdb import *
-from action import *
-
-from player import Player
-from property_set import PropertySet
-from deck import Deck
+from .action import *
+from .cardsdb import *
+from .deck import Deck
+from .player import Player
+from .property_set import PropertySet
 
 # Class responsible for managing the game flow
 class Game:
