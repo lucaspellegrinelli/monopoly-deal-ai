@@ -1,6 +1,4 @@
-import random
-
-from card import *
+from .card import *
 
 property_set_last_id = 0
 

@@ -1,4 +1,4 @@
-from card import *
+from .card import *
 
 # Array where all the cards of the deck will be stored
 ALL_CARDS = []
