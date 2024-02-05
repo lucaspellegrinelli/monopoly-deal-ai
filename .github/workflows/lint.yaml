@@ -1,0 +1,19 @@
+name: lint python
+on:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  lint_python:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
+        cache: pip
+        
+    - run: pip install black isort flake8
+    - run: black --check .
+    - run: flake8 . --count --extend-ignore=E203 --max-complexity=10 --max-line-length=88 --show-source --statistics
+    - run: isort --check-only --profile black .
