@@ -1,161 +1,78 @@
-from .card import *
+from monopoly.enums.action_type import ActionType
+from monopoly.enums.property_color import PropertyColor
+from monopoly.models.card import MoneyCard, PropertyCard, RentCard, ActionCard
 
-# Array where all the cards of the deck will be stored
 ALL_CARDS = []
 
 # ============================= MONEY ============================= #
 
-# Creates the correct 'MoneyCard' object based on the 'n' passed to
-# this function and gives each one a flag (first argument of the constructor)
-def getMoney(n):
-  if n == 1:
-    return MoneyCard(5, "1M", 1)
-  elif n == 2:
-    return MoneyCard(4, "2M", 2)
-  elif n == 3:
-    return MoneyCard(3, "3M", 3)
-  elif n == 4:
-    return MoneyCard(2, "4M", 4)
-  elif n == 5:
-    return MoneyCard(1, "5M", 5)
-  elif n == 10:
-    return MoneyCard(0, "10M", 10)
+MONEY_CARDS = [
+    [MoneyCard("10M", 10) for _ in range(1)],
+    [MoneyCard("5M", 5) for _ in range(2)],
+    [MoneyCard("4M", 4) for _ in range(3)],
+    [MoneyCard("3M", 3) for _ in range(3)],
+    [MoneyCard("2M", 2) for _ in range(5)],
+    [MoneyCard("1M", 1) for _ in range(6)],
+]
 
-# Adds the correct amount of each money bill in the game
-for i in range(1):
-  ALL_CARDS.append(getMoney(10))
-
-for i in range(2):
-  ALL_CARDS.append(getMoney(5))
-
-for i in range(3):
-  ALL_CARDS.append(getMoney(4))
-
-for i in range(3):
-  ALL_CARDS.append(getMoney(3))
-
-for i in range(5):
-  ALL_CARDS.append(getMoney(2))
-
-for i in range(6):
-  ALL_CARDS.append(getMoney(1))
-
+for money_card in MONEY_CARDS:
+    ALL_CARDS += money_card
 
 
 # ============================= PROPERTY ============================= #
 
-# Adds the correct amount of each property card in the game and gives each one
-# a flag number (first argument of the constructor)
-for i in range(2):
-  ALL_CARDS.append(PropertyCard(6, "Brown Property", 1, [BROWN_PROPERTY]))
+PROPERTY_CARDS = [
+    [PropertyCard("Brown Property", 1, [PropertyColor.BROWN]) for _ in range(2)],
+    [PropertyCard("Dark Blue Property", 4, [PropertyColor.DARK_BLUE]) for _ in range(2)],
+    [PropertyCard("Light Green Property", 2, [PropertyColor.LIGHT_GREEN]) for _ in range(2)],
+    [PropertyCard("Green Property", 4, [PropertyColor.GREEN]) for _ in range(3)],
+    [PropertyCard("Light Blue Property", 1, [PropertyColor.LIGHT_BLUE]) for _ in range(3)],
+    [PropertyCard("Orange Property", 2, [PropertyColor.ORANGE]) for _ in range(3)],
+    [PropertyCard("Pink Property", 2, [PropertyColor.PINK]) for _ in range(3)],
+    [PropertyCard("Red Property", 3, [PropertyColor.RED]) for _ in range(3)],
+    [PropertyCard("Yellow Property", 3, [PropertyColor.YELLOW]) for _ in range(3)],
+    [PropertyCard("Black Property", 2, [PropertyColor.BLACK]) for _ in range(4)],
+    [PropertyCard("Dark Blue/Green Property", 4, [PropertyColor.DARK_BLUE, PropertyColor.GREEN]) for _ in range(1)],
+    [PropertyCard("Light Blue/Brown Property", 1, [PropertyColor.LIGHT_BLUE, PropertyColor.BROWN]) for _ in range(1)],
+    [PropertyCard("Black/Green Property", 4, [PropertyColor.BLACK, PropertyColor.GREEN]) for _ in range(1)],
+    [PropertyCard("Light Blue/Black Property", 4, [PropertyColor.LIGHT_BLUE, PropertyColor.BLACK]) for _ in range(1)],
+    [PropertyCard("Black/Light Green Property", 2, [PropertyColor.BLACK, PropertyColor.LIGHT_GREEN]) for _ in range(1)],
+    [PropertyCard("Pink/Orange Property", 2, [PropertyColor.PINK, PropertyColor.ORANGE]) for _ in range(2)],
+    [PropertyCard("Red/Yellow Property", 3, [PropertyColor.RED, PropertyColor.YELLOW]) for _ in range(2)],
+    [PropertyCard("Rainbow Property", 0, [PropertyColor.RAINBOW]) for _ in range(2)],
+]
 
-for i in range(2):
-  ALL_CARDS.append(PropertyCard(7, "Dark Blue Property", 4, [DARK_BLUE_PROPERTY]))
-
-for i in range(2):
-  ALL_CARDS.append(PropertyCard(8, "Light Green Property", 2, [LIGHT_GREEN_PROPERTY]))
-
-for i in range(3):
-  ALL_CARDS.append(PropertyCard(9, "Green Property", 4, [GREEN_PROPERTY]))
-
-for i in range(3):
-  ALL_CARDS.append(PropertyCard(10, "Light Blue Property", 1, [LIGHT_BLUE_PROPERTY]))
-
-for i in range(3):
-  ALL_CARDS.append(PropertyCard(11, "Orange Property", 2, [ORANGE_PROPERTY]))
-
-for i in range(3):
-  ALL_CARDS.append(PropertyCard(12, "Pink Property", 2, [PINK_PROPERTY]))
-
-for i in range(3):
-  ALL_CARDS.append(PropertyCard(13, "Red Property", 3, [RED_PROPERTY]))
-
-for i in range(3):
-  ALL_CARDS.append(PropertyCard(14, "Yellow Property", 3, [YELLOW_PROPERTY]))
-
-for i in range(4):
-  ALL_CARDS.append(PropertyCard(15, "Black Property", 2, [BLACK_PROPERTY]))
-
-for i in range(1):
-  ALL_CARDS.append(PropertyCard(16, "Dark Blue/Green Property", 4, [DARK_BLUE_PROPERTY, GREEN_PROPERTY]))
-
-for i in range(1):
-  ALL_CARDS.append(PropertyCard(17, "Light Blue/Brown Property", 1, [LIGHT_BLUE_PROPERTY, BROWN_PROPERTY]))
-
-for i in range(1):
-  ALL_CARDS.append(PropertyCard(18, "Black/Green Property", 4, [BLACK_PROPERTY, GREEN_PROPERTY]))
-
-for i in range(1):
-  ALL_CARDS.append(PropertyCard(19, "Light Blue/Black Property", 4, [BLACK_PROPERTY, LIGHT_BLUE_PROPERTY]))
-
-for i in range(1):
-  ALL_CARDS.append(PropertyCard(20, "Black/Light Green Property", 2, [BLACK_PROPERTY, LIGHT_GREEN_PROPERTY]))
-
-for i in range(2):
-  ALL_CARDS.append(PropertyCard(21, "Pink/Orange Property", 2, [PINK_PROPERTY, ORANGE_PROPERTY]))
-
-for i in range(2):
-  ALL_CARDS.append(PropertyCard(22, "Red/Yellow Property", 3, [RED_PROPERTY, YELLOW_PROPERTY]))
-
-for i in range(2):
-  ALL_CARDS.append(PropertyCard(23, "Rainbow Property", 0, [RAINBOW_PROPERTY]))
-
-
+for property_card in PROPERTY_CARDS:
+    ALL_CARDS += property_card
 
 # ============================= RENT ============================= #
 
-# Adds the correct amount of each rent card in the game and gives each one
-# a flag number (first argument of the constructor)
-for i in range(2):
-  ALL_CARDS.append(RentCard(24, "Dark Blue/Green Rent", 1, [GREEN_PROPERTY, DARK_BLUE_PROPERTY], False))
+RENT_CARDS = [
+    [RentCard("Dark Blue/Green Rent", 1, [PropertyColor.GREEN, PropertyColor.DARK_BLUE], False) for _ in range(2)],
+    [RentCard("Brown/Light Blue Rent", 1, [PropertyColor.BROWN, PropertyColor.LIGHT_BLUE], False) for _ in range(2)],
+    [RentCard("Pink/Orange Rent", 1, [PropertyColor.PINK, PropertyColor.ORANGE], False) for _ in range(2)],
+    [RentCard("Black/Light Green Rent", 1, [PropertyColor.BLACK, PropertyColor.LIGHT_GREEN], False) for _ in range(2)],
+    [RentCard("Red/Yellow Rent", 1, [PropertyColor.RED, PropertyColor.YELLOW], False) for _ in range(2)],
+    [RentCard("Wild Rent", 1, [], True) for _ in range(3)],
+]
 
-for i in range(2):
-  ALL_CARDS.append(RentCard(25, "Brown/Light Blue Rent", 1, [BROWN_PROPERTY, LIGHT_BLUE_PROPERTY], False))
-
-for i in range(2):
-  ALL_CARDS.append(RentCard(26, "Pink/Orange Rent", 1, [PINK_PROPERTY, ORANGE_PROPERTY], False))
-
-for i in range(2):
-  ALL_CARDS.append(RentCard(27, "Black/Light Green Rent", 1, [BLACK_PROPERTY, LIGHT_GREEN_PROPERTY], False))
-
-for i in range(2):
-  ALL_CARDS.append(RentCard(28, "Red/Yellow Rent", 1, [RED_PROPERTY, YELLOW_PROPERTY], False))
-
-for i in range(3):
-  ALL_CARDS.append(RentCard(29, "Wild Rent", 1, [], True))
-
-
+for rent_card in RENT_CARDS:
+    ALL_CARDS += rent_card
 
 # ============================= ACTIONS ============================= #
 
-# Adds the correct amount of each action card in the game and gives each one
-# a flag number (first argument of the constructor)
-for i in range(2):
-  ALL_CARDS.append(ActionCard(DEAL_BREAKER, "Deal Braker", 5, "Steal a completed set"))
+ACTION_CARDS = [
+    [ActionCard("Deal Breaker", 5, ActionType.DEAL_BREAKER) for _ in range(2)],
+    [ActionCard("Debt Collector", 3, ActionType.DEBT_COLLECTOR) for _ in range(3)],
+    [ActionCard("Double the Rent", 1, ActionType.DOUBLE_RENT) for _ in range(2)],
+    [ActionCard("Forced Deal", 3, ActionType.FORCED_DEAL) for _ in range(4)],
+    [ActionCard("Hotel", 4, ActionType.HOTEL) for _ in range(3)],
+    [ActionCard("House", 3, ActionType.HOUSE) for _ in range(3)],
+    [ActionCard("It's my birthday", 2, ActionType.ITS_MY_BIRTHDAY) for _ in range(3)],
+    [ActionCard("Just Say No", 4, ActionType.JUST_SAY_NO) for _ in range(3)],
+    [ActionCard("Pass Go", 1, ActionType.PASS_GO) for _ in range(10)],
+    [ActionCard("Sly Deal", 3, ActionType.SLY_DEAL) for _ in range(3)],
+]
 
-for i in range(3):
-  ALL_CARDS.append(ActionCard(DEBT_COLLECTOR, "Debt Collector", 3, "Force someone to give you 5M"))
-
-for i in range(2):
-  ALL_CARDS.append(ActionCard(DOUBLE_RENT, "Double the Rent", 1, "Double the rent"))
-
-for i in range(4):
-  ALL_CARDS.append(ActionCard(FORCED_DEAL, "Forced Deal", 3, "Swap any non completed property"))
-
-for i in range(3):
-  ALL_CARDS.append(ActionCard(HOTEL, "Hotel", 4, "Add on top of a house"))
-
-for i in range(3):
-  ALL_CARDS.append(ActionCard(HOUSE, "House", 3, "Add on top of a completed set"))
-
-for i in range(3):
-  ALL_CARDS.append(ActionCard(ITS_MY_BIRTHDAY, "It's my birthday", 2, "Get 2M from everyone"))
-
-for i in range(3):
-  ALL_CARDS.append(ActionCard(JUST_SAY_NO, "Just Say No", 4, "No"))
-
-for i in range(10):
-  ALL_CARDS.append(ActionCard(PASS_GO, "Pass Go", 1, "Draw 2"))
-
-for i in range(3):
-  ALL_CARDS.append(ActionCard(SLY_DEAL, "Sly Deal", 3, "Steal a non pSet property"))
+for action_card in ACTION_CARDS:
+    ALL_CARDS += action_card

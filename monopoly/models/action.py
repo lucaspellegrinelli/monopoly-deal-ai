@@ -1,7 +1,7 @@
 from typing import List
 
 from monopoly.models.card import ActionCard, MoneyCard, PropertyCard
-from monopoly.property_set import PropertySet
+from monopoly.models.property_set import PropertySet
 
 
 class Action:

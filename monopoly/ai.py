@@ -1,9 +1,9 @@
 from typing import List
 
-from monopoly.action import Action
-from monopoly.card import Card, PropertyCard
 from monopoly.game import Game
-from monopoly.property_set import PropertySet
+from monopoly.models.action import Action
+from monopoly.models.card import Card, PropertyCard
+from monopoly.models.property_set import PropertySet
 
 
 # - Abstract class of an Artificial Intellience
