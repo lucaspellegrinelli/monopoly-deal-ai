@@ -1,10 +1,15 @@
 import copy
 from typing import List
 
-from monopoly.action import Action, DoNothingAction, PlayPropertyAction, MovePropertyAction
 from monopoly.ai import AI
-from monopoly.card import Card, MoneyCard, PropertyCard, ActionCard, RentCard
-from monopoly.property_set import PropertySet
+from monopoly.models.action import (
+    Action,
+    DoNothingAction,
+    MovePropertyAction,
+    PlayPropertyAction,
+)
+from monopoly.models.card import ActionCard, Card, MoneyCard, PropertyCard, RentCard
+from monopoly.models.property_set import PropertySet
 
 
 class Player:
@@ -20,12 +25,10 @@ class Player:
         self.double_rent = False
         self.max_cards_in_hand = 7
 
-    # ======================== AI STUFF ========================
-
     # Calls the AI with all the game instance so that the player will choose
     # which action it will take in its turn
-    def chooseMove(self, instance, moves_left):
-        move = self.ai.chooseMove(instance, self.id, moves_left)
+    def choose_move(self, instance, moves_left):
+        move = self.ai.choose_move(instance, self.id, moves_left)
 
         if not isinstance(move, Action):
             move = DoNothingAction(self.id)
@@ -34,12 +37,12 @@ class Player:
 
     # Calls the AI so that the player will choose which of its cards will be
     # used as payment to a rent or action card used against him
-    def choosePayment(self, instance, how_much):
+    def choose_payment(self, instance, how_much):
         payment = []
         payed = 0
 
         while payed < how_much and len(self.money) > 0 and len(self.sets) > 0:
-            this_it_pay = self.ai.choosePayment(
+            this_it_pay = self.ai.choose_payment(
                 instance, self.id, self.sets, self.money, how_much
             )
 
@@ -58,20 +61,20 @@ class Player:
                 payed += card.value
                 if isinstance(card, PropertyCard):
                     for set in self.sets:
-                        if set.hasProperty(card):
-                            set.removeProperty(card)
+                        if set.has_property(card):
+                            set.remove_property(card)
                             break
                 else:
-                    self.removeFromMoneyPile(card)
+                    self.remove_from_money_pile(card)
 
         return payment
 
     # Calls the AI so that the player will choose which of its cards will be
     # discarded as a result of having more that the allowed cards in its hand
-    def chooseWhatToDiscard(self, instance):
+    def choose_what_to_discard(self, instance):
         discarded = []
         while len(self.hand) > self.max_cards_in_hand:
-            discarded += self.ai.chooseWhatToDiscard(instance, self.id, self.hand)
+            discarded += self.ai.choose_what_to_discard(instance, self.id, self.hand)
 
             if len(discarded) == 0:
                 raise RuntimeError(
@@ -83,13 +86,13 @@ class Player:
                 )
 
             for card in discarded:
-                self.removeFromHand(card)
+                self.remove_from_hand(card)
 
         return discarded
 
     # Calls the AI so it decides where to put all of the properties/money it has recieved
     # as a result of using a card that asks for a payment
-    def recievePayment(self, instance, payment):
+    def recieve_payment(self, instance, payment):
         single_properties = []
         for item in payment:
             if (
@@ -104,7 +107,7 @@ class Player:
                 self.sets.append(item)
 
         if single_properties:
-            actions = self.ai.recievePropertiesFromPayment(
+            actions = self.ai.recieve_properties_from_payment(
                 instance, self.id, single_properties
             )
 
@@ -130,7 +133,7 @@ class Player:
                     if property_recieved:
                         addressed_cards.append(action.property)
                         addressed_cards_id.append(action.property.id)
-                        self.givePropertyToSet(action.property_set, action.property)
+                        self.give_property_to_set(action.property_set, action.property)
                     else:
                         raise RuntimeError(
                             "In 'recievePayment' you tried to play a property \
@@ -151,7 +154,7 @@ class Player:
 
     # Calls the AI so that the player can decide if (given it has a "JUST SAY NO" card) it
     # wants to negate or not a card used against him.
-    def willNegate(self, instance, action):
+    def will_negate(self, instance, action):
         has_negate = len([c for c in self.hand if c.id == JUST_SAY_NO]) > 0
 
         if has_negate:
@@ -165,9 +168,9 @@ class Player:
             return False
 
     # Calls the AI to decide how it wants to be arranged.
-    def rearrangeCards(self, instance):
+    def rearrange_cards(self, instance):
         actions = []
-        r = self.ai.rearrangeCards(instance, self.id, self.sets)
+        r = self.ai.rearrange_cards(instance, self.id, self.sets)
         for action in r:
             if isinstance(action, MovePropertyAction):
                 actions.append(action)
@@ -178,46 +181,44 @@ class Player:
                 )
         return actions
 
-    # ======================== UTIL ========================
-
-    def turnPassing(self):
+    def pass_turn(self):
         self.double_rent = False
-        self.cleanClearSets()
+        self.clean_clear_sets()
 
-    def cleanClearSets(self):
-        self.sets = [x for x in self.sets if x.numberOfProperties() > 0]
+    def clean_clear_sets(self):
+        self.sets = [x for x in self.sets if x.number_of_properties() > 0]
 
-    def hasWon(self, how_many_to_win):
+    def has_won(self, how_many_to_win):
         completed = 0
         for set in self.sets:
-            if set.isCompleted():
+            if set.is_completed():
                 completed += 1
 
         return completed >= how_many_to_win
 
     # ======================== CARD MANAGEMENT ========================
 
-    def givePropertyToSet(self, set, card):
+    def give_property_to_set(self, set, card):
         if set.numberOfProperties() > 0:
             for s in self.sets:
                 if s.id == set.id:
-                    s.addProperty(card)
+                    s.add_property(card)
                     return
         else:
             pSet = PropertySet(set.colors)
-            pSet.addProperty(card)
-            self.addPropertySet(pSet)
+            pSet.add_property(card)
+            self.add_property_set(pSet)
 
-    def takeOutProperty(self, property):
+    def take_out_property(self, property):
         for set in self.sets:
-            if set.hasProperty(property):
-                set.removeProperty(property)
+            if set.has_property(property):
+                set.remove_property(property)
                 return
 
-    def addToHand(self, cards):
+    def add_to_hand(self, cards):
         self.hand += cards
 
-    def removeFromHand(self, card):
+    def remove_from_hand(self, card):
         # TODO: MAKE THIS WORK WITH "self.hand.remove(card)"
         # where instead of looping through the hand and finding
         # the correct card, I can just pass the 'card' parameter
@@ -227,19 +228,19 @@ class Player:
                 self.hand.remove(c)
                 break
 
-    def addPropertySet(self, set):
+    def add_property_set(self, set):
         self.sets.append(set)
 
-    def hasPropertySet(self, set):
+    def has_property_set(self, set):
         return set in self.sets
 
-    def removePropertySet(self, set):
+    def remove_property_set(self, set):
         self.sets.remove(set)
 
-    def addToMoneyPile(self, card):
+    def add_to_money_pile(self, card):
         self.money.append(card)
 
-    def removeFromMoneyPile(self, card):
+    def remove_from_money_pile(self, card):
         # TODO: MAKE THIS WORK WITH "self.money.remove(card)"
         # where instead of looping through the hand and finding
         # the correct card, I can just pass the 'card' parameter

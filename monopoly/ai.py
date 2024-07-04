@@ -46,7 +46,7 @@ class AI:
     # the replacement.
     #
     # ---------------------------------------------------------------------------
-    def chooseMove(self, instance: Game, player_id: int, moves_left: int):
+    def choose_move(self, instance: Game, player_id: int, moves_left: int):
         raise NotImplementedError(
             "Please implement the method 'chooseMove' in the subclass"
         )
@@ -87,7 +87,7 @@ class AI:
     # - If no cards are returned, an exception will be raised
     #
     # ---------------------------------------------------------------------------
-    def choosePayment(
+    def choose_payment(
         self, instance, player_id, player_sets, player_money_pile, how_much
     ):
         raise NotImplementedError(
@@ -126,7 +126,7 @@ class AI:
     # - If this doesn't return any cards, an exception will be raised
     #
     # ---------------------------------------------------------------------------
-    def chooseWhatToDiscard(
+    def choose_what_to_discard(
         self, instance: Game, player_id: int, player_hand: List[Card]
     ):
         raise NotImplementedError(
@@ -186,7 +186,7 @@ class AI:
     # raised
     #
     # ---------------------------------------------------------------------------
-    def recievePropertiesFromPayment(
+    def recieve_properties_from_payment(
         self, instance: Game, player_id: int, properties: List[PropertyCard]
     ):
         raise NotImplementedError(
@@ -274,7 +274,7 @@ class AI:
     # be raised
     #
     # ---------------------------------------------------------------------------
-    def rearrangeCards(
+    def rearrange_cards(
         self, instance: Game, player_id: int, player_sets: List[PropertySet]
     ):
         raise NotImplementedError(

@@ -1,6 +1,6 @@
 from typing import List
 
-from monopoly.card import ActionCard, MoneyCard, PropertyCard
+from monopoly.models.card import ActionCard, MoneyCard, PropertyCard
 from monopoly.property_set import PropertySet
 
 

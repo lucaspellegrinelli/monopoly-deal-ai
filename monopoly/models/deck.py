@@ -2,7 +2,7 @@ import copy
 import random
 from typing import List
 
-from monopoly.card import Card
+from monopoly.models.card import Card
 
 
 # General class for the deck of the cards used in the game.
