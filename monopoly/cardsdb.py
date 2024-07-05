@@ -1,8 +1,10 @@
+from typing import List
+
 from monopoly.enums.action_type import ActionType
 from monopoly.enums.property_color import PropertyColor
-from monopoly.models.card import MoneyCard, PropertyCard, RentCard, ActionCard
+from monopoly.models.card import ActionCard, Card, MoneyCard, PropertyCard, RentCard
 
-ALL_CARDS = []
+ALL_CARDS: List[Card] = []
 
 # ============================= MONEY ============================= #
 
@@ -23,22 +25,74 @@ for money_card in MONEY_CARDS:
 
 PROPERTY_CARDS = [
     [PropertyCard("Brown Property", 1, [PropertyColor.BROWN]) for _ in range(2)],
-    [PropertyCard("Dark Blue Property", 4, [PropertyColor.DARK_BLUE]) for _ in range(2)],
-    [PropertyCard("Light Green Property", 2, [PropertyColor.LIGHT_GREEN]) for _ in range(2)],
+    [
+        PropertyCard("Dark Blue Property", 4, [PropertyColor.DARK_BLUE])
+        for _ in range(2)
+    ],
+    [
+        PropertyCard("Light Green Property", 2, [PropertyColor.LIGHT_GREEN])
+        for _ in range(2)
+    ],
     [PropertyCard("Green Property", 4, [PropertyColor.GREEN]) for _ in range(3)],
-    [PropertyCard("Light Blue Property", 1, [PropertyColor.LIGHT_BLUE]) for _ in range(3)],
+    [
+        PropertyCard("Light Blue Property", 1, [PropertyColor.LIGHT_BLUE])
+        for _ in range(3)
+    ],
     [PropertyCard("Orange Property", 2, [PropertyColor.ORANGE]) for _ in range(3)],
     [PropertyCard("Pink Property", 2, [PropertyColor.PINK]) for _ in range(3)],
     [PropertyCard("Red Property", 3, [PropertyColor.RED]) for _ in range(3)],
     [PropertyCard("Yellow Property", 3, [PropertyColor.YELLOW]) for _ in range(3)],
     [PropertyCard("Black Property", 2, [PropertyColor.BLACK]) for _ in range(4)],
-    [PropertyCard("Dark Blue/Green Property", 4, [PropertyColor.DARK_BLUE, PropertyColor.GREEN]) for _ in range(1)],
-    [PropertyCard("Light Blue/Brown Property", 1, [PropertyColor.LIGHT_BLUE, PropertyColor.BROWN]) for _ in range(1)],
-    [PropertyCard("Black/Green Property", 4, [PropertyColor.BLACK, PropertyColor.GREEN]) for _ in range(1)],
-    [PropertyCard("Light Blue/Black Property", 4, [PropertyColor.LIGHT_BLUE, PropertyColor.BLACK]) for _ in range(1)],
-    [PropertyCard("Black/Light Green Property", 2, [PropertyColor.BLACK, PropertyColor.LIGHT_GREEN]) for _ in range(1)],
-    [PropertyCard("Pink/Orange Property", 2, [PropertyColor.PINK, PropertyColor.ORANGE]) for _ in range(2)],
-    [PropertyCard("Red/Yellow Property", 3, [PropertyColor.RED, PropertyColor.YELLOW]) for _ in range(2)],
+    [
+        PropertyCard(
+            "Dark Blue/Green Property",
+            4,
+            [PropertyColor.DARK_BLUE, PropertyColor.GREEN],
+        )
+        for _ in range(1)
+    ],
+    [
+        PropertyCard(
+            "Light Blue/Brown Property",
+            1,
+            [PropertyColor.LIGHT_BLUE, PropertyColor.BROWN],
+        )
+        for _ in range(1)
+    ],
+    [
+        PropertyCard(
+            "Black/Green Property", 4, [PropertyColor.BLACK, PropertyColor.GREEN]
+        )
+        for _ in range(1)
+    ],
+    [
+        PropertyCard(
+            "Light Blue/Black Property",
+            4,
+            [PropertyColor.LIGHT_BLUE, PropertyColor.BLACK],
+        )
+        for _ in range(1)
+    ],
+    [
+        PropertyCard(
+            "Black/Light Green Property",
+            2,
+            [PropertyColor.BLACK, PropertyColor.LIGHT_GREEN],
+        )
+        for _ in range(1)
+    ],
+    [
+        PropertyCard(
+            "Pink/Orange Property", 2, [PropertyColor.PINK, PropertyColor.ORANGE]
+        )
+        for _ in range(2)
+    ],
+    [
+        PropertyCard(
+            "Red/Yellow Property", 3, [PropertyColor.RED, PropertyColor.YELLOW]
+        )
+        for _ in range(2)
+    ],
     [PropertyCard("Rainbow Property", 0, [PropertyColor.RAINBOW]) for _ in range(2)],
 ]
 
@@ -48,11 +102,43 @@ for property_card in PROPERTY_CARDS:
 # ============================= RENT ============================= #
 
 RENT_CARDS = [
-    [RentCard("Dark Blue/Green Rent", 1, [PropertyColor.GREEN, PropertyColor.DARK_BLUE], False) for _ in range(2)],
-    [RentCard("Brown/Light Blue Rent", 1, [PropertyColor.BROWN, PropertyColor.LIGHT_BLUE], False) for _ in range(2)],
-    [RentCard("Pink/Orange Rent", 1, [PropertyColor.PINK, PropertyColor.ORANGE], False) for _ in range(2)],
-    [RentCard("Black/Light Green Rent", 1, [PropertyColor.BLACK, PropertyColor.LIGHT_GREEN], False) for _ in range(2)],
-    [RentCard("Red/Yellow Rent", 1, [PropertyColor.RED, PropertyColor.YELLOW], False) for _ in range(2)],
+    [
+        RentCard(
+            "Dark Blue/Green Rent",
+            1,
+            [PropertyColor.GREEN, PropertyColor.DARK_BLUE],
+            False,
+        )
+        for _ in range(2)
+    ],
+    [
+        RentCard(
+            "Brown/Light Blue Rent",
+            1,
+            [PropertyColor.BROWN, PropertyColor.LIGHT_BLUE],
+            False,
+        )
+        for _ in range(2)
+    ],
+    [
+        RentCard(
+            "Pink/Orange Rent", 1, [PropertyColor.PINK, PropertyColor.ORANGE], False
+        )
+        for _ in range(2)
+    ],
+    [
+        RentCard(
+            "Black/Light Green Rent",
+            1,
+            [PropertyColor.BLACK, PropertyColor.LIGHT_GREEN],
+            False,
+        )
+        for _ in range(2)
+    ],
+    [
+        RentCard("Red/Yellow Rent", 1, [PropertyColor.RED, PropertyColor.YELLOW], False)
+        for _ in range(2)
+    ],
     [RentCard("Wild Rent", 1, [], True) for _ in range(3)],
 ]
 

@@ -1,6 +1,6 @@
-from typing import List
+from typing import List, Union
 
-from monopoly.models.card import ActionCard, MoneyCard, PropertyCard
+from monopoly.models.card import ActionCard, MoneyCard, PropertyCard, RentCard
 from monopoly.models.property_set import PropertySet
 
 
@@ -74,17 +74,17 @@ class AskMoneyAction(Action):
     def __init__(
         self,
         who_used_id: int,
-        action_card: ActionCard,
-        money: MoneyCard,
+        card: Union[ActionCard, RentCard],
+        amount: int,
         target_ids: List[int],
     ):
         Action.__init__(self, who_used_id)
-        self.action_card = action_card
-        self.money = money
+        self.card = card
+        self.amount = amount
         self.target_ids = target_ids
 
     def __repr__(self):
-        return f"Asked {self.money} for Players {self.target_ids}"
+        return f"Asked {self.amount} for Players {self.target_ids}"
 
 
 # Class representing the action of a target player drawing a specific

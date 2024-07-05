@@ -1,3 +1,4 @@
+import uuid
 from typing import List
 
 from monopoly.enums.property_color import PropertyColor
@@ -31,6 +32,7 @@ HOW_MANY_TO_COMPLETE = {
 
 class PropertySet:
     def __init__(self, colors: List[PropertyColor]):
+        self.id = uuid.uuid4()
         self.properties = []
         self.colors = colors
         self.hasHouse = False

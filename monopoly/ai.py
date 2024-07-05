@@ -1,6 +1,5 @@
 from typing import List
 
-from monopoly.game import Game
 from monopoly.models.action import Action
 from monopoly.models.card import Card, PropertyCard
 from monopoly.models.property_set import PropertySet
@@ -46,7 +45,7 @@ class AI:
     # the replacement.
     #
     # ---------------------------------------------------------------------------
-    def choose_move(self, instance: Game, player_id: int, moves_left: int):
+    def choose_move(self, instance, player_id: int, moves_left: int):
         raise NotImplementedError(
             "Please implement the method 'chooseMove' in the subclass"
         )
@@ -127,7 +126,7 @@ class AI:
     #
     # ---------------------------------------------------------------------------
     def choose_what_to_discard(
-        self, instance: Game, player_id: int, player_hand: List[Card]
+        self, instance, player_id: int, player_hand: List[Card]
     ):
         raise NotImplementedError(
             "Please implement the method 'chooseWhatToDiscard' in the subclass"
@@ -187,7 +186,7 @@ class AI:
     #
     # ---------------------------------------------------------------------------
     def recieve_properties_from_payment(
-        self, instance: Game, player_id: int, properties: List[PropertyCard]
+        self, instance, player_id: int, properties: List[PropertyCard]
     ):
         raise NotImplementedError(
             "Please implement the method 'recievePayment' in the subclass"
@@ -237,7 +236,7 @@ class AI:
     # - If the return value is not a boolean, an exception will be raised
     #
     # ---------------------------------------------------------------------------
-    def willNegate(self, instance: Game, player_id: int, action: Action):
+    def will_negate(self, instance, player_id: int, action: Action):
         raise NotImplementedError(
             "Please implement the method 'willNegate' in the subclass"
         )
@@ -275,7 +274,7 @@ class AI:
     #
     # ---------------------------------------------------------------------------
     def rearrange_cards(
-        self, instance: Game, player_id: int, player_sets: List[PropertySet]
+        self, instance, player_id: int, player_sets: List[PropertySet]
     ):
         raise NotImplementedError(
             "Please implement the method 'rearrangeCards' in the subclass"

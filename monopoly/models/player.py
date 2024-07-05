@@ -2,6 +2,7 @@ import copy
 from typing import List
 
 from monopoly.ai import AI
+from monopoly.enums.action_type import ActionType
 from monopoly.models.action import (
     Action,
     DoNothingAction,
@@ -27,7 +28,7 @@ class Player:
 
     # Calls the AI with all the game instance so that the player will choose
     # which action it will take in its turn
-    def choose_move(self, instance, moves_left):
+    def choose_move(self, instance, moves_left: int):
         move = self.ai.choose_move(instance, self.id, moves_left)
 
         if not isinstance(move, Action):
@@ -37,7 +38,7 @@ class Player:
 
     # Calls the AI so that the player will choose which of its cards will be
     # used as payment to a rent or action card used against him
-    def choose_payment(self, instance, how_much):
+    def choose_payment(self, instance, how_much: int):
         payment = []
         payed = 0
 
@@ -92,8 +93,8 @@ class Player:
 
     # Calls the AI so it decides where to put all of the properties/money it has recieved
     # as a result of using a card that asks for a payment
-    def recieve_payment(self, instance, payment):
-        single_properties = []
+    def recieve_payment(self, instance, payment: List[Card]):
+        single_properties: List[PropertyCard] = []
         for item in payment:
             if (
                 isinstance(item, MoneyCard)
@@ -120,19 +121,17 @@ class Player:
         on the fact that in this iteration it didn't)."
                 )
 
-            addressed_cards = []
-            addressed_cards_id = []
+            addressed_cards: List[Card] = []
             for action in actions:
                 if isinstance(action, PlayPropertyAction):
                     property_recieved = False
                     for card in single_properties:
-                        if card.id == action.property.id:
+                        if card == action.property:
                             property_recieved = True
                             break
 
                     if property_recieved:
                         addressed_cards.append(action.property)
-                        addressed_cards_id.append(action.property.id)
                         self.give_property_to_set(action.property_set, action.property)
                     else:
                         raise RuntimeError(
@@ -145,20 +144,24 @@ class Player:
           of the type PlayPropertyAction."
                     )
 
+            addressed_card_names = set([c.name for c in addressed_cards])
             unaddressed_cards = [
-                p for p in single_properties if p.id not in addressed_cards_id
+                p for p in single_properties if p.name not in addressed_card_names
             ]
 
             if len(unaddressed_cards) > 0:
-                self.recievePropertiesFromPayment(instance, unaddressed_cards)
+                self.ai.recieve_properties_from_payment(
+                    instance, self.id, unaddressed_cards
+                )
 
     # Calls the AI so that the player can decide if (given it has a "JUST SAY NO" card) it
     # wants to negate or not a card used against him.
-    def will_negate(self, instance, action):
-        has_negate = len([c for c in self.hand if c.id == JUST_SAY_NO]) > 0
+    def will_negate(self, instance, action: Action):
+        actions = [c for c in self.hand if isinstance(c, ActionCard)]
+        has_negate = any([c for c in actions if c.action == ActionType.JUST_SAY_NO])
 
         if has_negate:
-            negate = self.ai.willNegate(instance, self.id, action)
+            negate = self.ai.will_negate(instance, self.id, action)
             if negate != True and negate != False:
                 raise RuntimeError(
                     "In the 'willNegate' method, the return value was not a boolean."
@@ -188,7 +191,7 @@ class Player:
     def clean_clear_sets(self):
         self.sets = [x for x in self.sets if x.number_of_properties() > 0]
 
-    def has_won(self, how_many_to_win):
+    def has_won(self, how_many_to_win: int):
         completed = 0
         for set in self.sets:
             if set.is_completed():
@@ -198,66 +201,70 @@ class Player:
 
     # ======================== CARD MANAGEMENT ========================
 
-    def give_property_to_set(self, set, card):
-        if set.numberOfProperties() > 0:
+    def give_property_to_set(self, pset: PropertySet, card: PropertyCard):
+        if pset.number_of_properties() > 0:
             for s in self.sets:
-                if s.id == set.id:
+                if s == pset:
                     s.add_property(card)
                     return
         else:
-            pSet = PropertySet(set.colors)
+            pSet = PropertySet(pset.colors)
             pSet.add_property(card)
             self.add_property_set(pSet)
 
-    def take_out_property(self, property):
+    def take_out_property(self, property: PropertyCard):
         for set in self.sets:
             if set.has_property(property):
                 set.remove_property(property)
                 return
 
-    def add_to_hand(self, cards):
+    def add_to_hand(self, cards: List[Card]):
         self.hand += cards
 
-    def remove_from_hand(self, card):
+    def remove_from_hand(self, card: Card):
         # TODO: MAKE THIS WORK WITH "self.hand.remove(card)"
         # where instead of looping through the hand and finding
         # the correct card, I can just pass the 'card' parameter
         # and based on its id, the correct card is removed
         for c in self.hand:
-            if c.id == card.id:
+            if c == card:
                 self.hand.remove(c)
                 break
 
-    def add_property_set(self, set):
-        self.sets.append(set)
+    def add_property_set(self, pset: PropertySet):
+        self.sets.append(pset)
 
-    def has_property_set(self, set):
-        return set in self.sets
+    def has_property_set(self, pset: PropertySet):
+        return pset in self.sets
 
-    def remove_property_set(self, set):
-        self.sets.remove(set)
+    def remove_property_set(self, pset: PropertySet):
+        self.sets.remove(pset)
 
-    def add_to_money_pile(self, card):
+    def add_to_money_pile(self, card: MoneyCard):
         self.money.append(card)
 
-    def remove_from_money_pile(self, card):
+    def remove_from_money_pile(self, card: MoneyCard):
         # TODO: MAKE THIS WORK WITH "self.money.remove(card)"
         # where instead of looping through the hand and finding
         # the correct card, I can just pass the 'card' parameter
         # and based on its id, the correct card is removed
         for c in self.money:
-            if c.id == card.id:
+            if c == card:
                 self.money.remove(c)
                 break
 
-    # ======================== INSTANCE MANAGEMENT ========================
     def copy(self):
         return copy.deepcopy(self)
 
-    # ======================== BUILT IN METHODS OVERRIDE ========================
     def __str__(self):
         final = "\n- Hand :\t" + str(self.hand) + "\n"
         final += "- Money:\t" + str(self.money) + "\n"
         final += "- Field:\t" + str(self.sets) + "\n"
 
         return final
+
+    def __eq__(self, other):
+        if not isinstance(other, Player):
+            return False
+
+        return self.id == other.id

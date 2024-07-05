@@ -44,7 +44,7 @@ class Deck:
         return [self.draw() for _ in range(number)]
 
     # Addes the specified card to the used pile
-    def add_to_used_pile(self, card):
+    def add_to_used_pile(self, card: Card):
         self.used_pile.append(card)
 
     # Creates another object exactly the same as this one
